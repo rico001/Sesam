@@ -13,10 +13,19 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
 
     ExpandableListView expListView;
     ExpandableListAdapter listAdapterGeneralSettings;
+    List<String> listDataHeader;
+    HashMap<String, List<String>> listDataChild;
+
+
+
     Button buttonSaveSettings;
     Button buttonSaveTimeWindow;
     SeekBar seekBarTime;
@@ -28,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        prepareTimeWindowlist();
         initWidgetsFromActivityMainScreen();
     }
 
@@ -37,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         //erweiterbare Liste einrichten
         expListView = (ExpandableListView) findViewById(R.id.lvExpTimeWidows);
-        listAdapterGeneralSettings = new ExpandableListAdapter(this);
+        listAdapterGeneralSettings = new ExpandableListAdapter(this, listDataHeader, listDataChild);
         expListView.setAdapter(listAdapterGeneralSettings);
 
         //Buttons einrichten
@@ -96,6 +106,30 @@ public class MainActivity extends AppCompatActivity {
         //initial Text für TextViews enrichten
         textViewDuration.setText(seekBarTime.getProgress()+" Sekunden");
         textViewTime.setText(seekBarHowMany.getProgress()+" Mal");
+    }
+
+    void prepareTimeWindowlist(){
+        listDataHeader = new ArrayList<String>();
+        listDataChild = new HashMap<String, List<String>>();
+
+        //Titel
+        listDataHeader.add("Feiern");
+        listDataHeader.add("Postbote DHL");
+        listDataHeader.add("Postbote HERMES");
+
+        //Daturm und Uhrzeit zu jewiligen Titel
+        List<String> top250 = new ArrayList<String>();
+        top250.add("The Shawshank Redemption");
+
+        List<String> nowShowing = new ArrayList<String>();
+        nowShowing.add("The Conjuring");
+
+        List<String> comingSoon = new ArrayList<String>();
+        comingSoon.add("2 Guns");
+
+        listDataChild.put(listDataHeader.get(0), top250); // Header, Child data
+        listDataChild.put(listDataHeader.get(1), nowShowing);
+        listDataChild.put(listDataHeader.get(2), comingSoon);
     }
 
 }
