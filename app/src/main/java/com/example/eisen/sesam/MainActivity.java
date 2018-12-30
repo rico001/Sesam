@@ -33,6 +33,8 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    SettingsModel settingsModel;
+
     ExpandableListView expListView;
     ExpandableListAdapter listAdapterGeneralSettings;
     List<String> listDataHeader;
@@ -41,14 +43,15 @@ public class MainActivity extends AppCompatActivity {
     Button buttonSaveSettings;
     Button buttonSaveTimeWindow;
     Button buttonDeleteAllWindows;
+    Button testButton;
 
     SeekBar seekBarTime;
     SeekBar seekBarHowMany;
 
     TextView textViewTime;
     TextView textViewDuration;
-
     TextView  editTextDate;
+
     EditText editTextTitel;
     EditText editTextVon;
     EditText editTextBis;
@@ -59,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
     //_____________________SAVE DATA________________________________________
     public static final String SHARED_PREFS = "sharedPrefs";
     public static final String SAVESETIINGS="savesettings";
+    private String jsonLoad;
     //__________________________________________________________________
 
     boolean editTextIsTouched=false;
@@ -69,18 +73,31 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         prepareTimeWindowlist();
-        initWidgetsFromActivityMainScreen();
+        initButtons();
+        initSeekBars();
+        initEditTexts();
+        initTextViews();
     }
 
 
-    //initialisert Widgets des ActivityMainScreen
-    void initWidgetsFromActivityMainScreen(){
+    void initButtons(){
+        //TestButton
+        testButton = (Button) findViewById(R.id.testButton);
+        testButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadData();
+            }
+        });
+
+
         //Buttons einrichten
         buttonSaveSettings = (Button) findViewById(R.id.buttonSaveSettings);
         buttonSaveSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 v.setEnabled(false);
+                saveData();
                 Toast.makeText(getApplicationContext(),"Einstellungen wurden gespeichert",Toast.LENGTH_SHORT).show();
             }
         });
@@ -89,8 +106,8 @@ public class MainActivity extends AppCompatActivity {
         buttonSaveTimeWindow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    addTimeWindow();
-                    saveData();
+                addTimeWindow();
+                saveData();
             }
         });
 
@@ -99,14 +116,21 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 deleleteWindowList();
+                saveData();
             }
         });
+    }
 
-
+    void initTextViews(){
         //TextViews einrichten
         textViewTime = (TextView) findViewById(R.id.textViewTime);
         textViewDuration = (TextView) findViewById(R.id.textViewDuration);
 
+        textViewDuration.setText(seekBarTime.getProgress()+" Sekunden");
+        textViewTime.setText(seekBarHowMany.getProgress()+" Mal");
+    }
+
+    void initSeekBars(){
         //seekBar für Öffnungsdauer einrichten
         seekBarTime = (SeekBar) findViewById(R.id.seekBarTime);
         seekBarTime.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -138,8 +162,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar){}
         });
+    }
 
-
+    void initEditTexts(){
         //init EditTexts
         editTextTitel = (EditText) findViewById(R.id.editTextTitel);
         editTextTitel.addTextChangedListener(new TextWatcher() {
@@ -257,10 +282,6 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
-
-        //initial Text für TextViews enrichten
-        textViewDuration.setText(seekBarTime.getProgress()+" Sekunden");
-        textViewTime.setText(seekBarHowMany.getProgress()+" Mal");
     }
 
     void prepareTimeWindowlist(){
@@ -343,22 +364,27 @@ public class MainActivity extends AppCompatActivity {
     private void saveData(){
         SettingsModel settingsModel = new SettingsModel(seekBarTime.getProgress(), seekBarHowMany.getProgress(),listDataHeader, listDataChild );
         Gson gson = new Gson();
-        String json = gson.toJson(settingsModel);
+        String jsonSave = gson.toJson(settingsModel);
 
-        SettingsModel settingsModelLoad = gson.fromJson(json,SettingsModel.class);
-
-        /*
-        for(int i=0; i<=settingsModel.getListDataHeader().size()-1;i++){
-            Log.v("childs:",settingsModelLoad.getListDataHeader().get(i));
-            Log.v("childs:",settingsModelLoad.getListDataChild().get(settingsModelLoad.getListDataHeader().get(i)).get(0));
-            Log.v("childs:",settingsModelLoad.getListDataChild().get(settingsModelLoad.getListDataHeader().get(i)).get(1));
-        }
-        */
-
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS,MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(SAVESETIINGS, jsonSave);
+        editor.commit();
     }
 
     private void loadData(){
 
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS,MODE_PRIVATE);
+        jsonLoad = sharedPreferences.getString(SAVESETIINGS,"");
+
+        Gson gson = new Gson();
+        SettingsModel settingsModelLoad = gson.fromJson(jsonLoad,SettingsModel.class);
+
+        try{
+            Log.d("test",settingsModelLoad.getListDataHeader().get(0));
+        }catch (NullPointerException e){
+            Log.d("test","NUllPoitnterException");
+        }
     }
 
 }
