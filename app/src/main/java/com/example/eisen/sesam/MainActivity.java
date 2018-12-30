@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
 
     Button buttonSaveSettings;
     Button buttonSaveTimeWindow;
+    Button buttonDeleteAllWindows;
 
     SeekBar seekBarTime;
     SeekBar seekBarHowMany;
@@ -57,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
         prepareTimeWindowlist();
         initWidgetsFromActivityMainScreen();
     }
@@ -64,12 +66,6 @@ public class MainActivity extends AppCompatActivity {
 
     //initialisert Widgets des ActivityMainScreen
     void initWidgetsFromActivityMainScreen(){
-        setContentView(R.layout.activity_main);
-        //erweiterbare Liste einrichten
-        expListView = (ExpandableListView) findViewById(R.id.lvExpTimeWidows);
-        listAdapterGeneralSettings = new ExpandableListAdapter(this, listDataHeader, listDataChild);
-        expListView.setAdapter(listAdapterGeneralSettings);
-
         //Buttons einrichten
         buttonSaveSettings = (Button) findViewById(R.id.buttonSaveSettings);
         buttonSaveSettings.setOnClickListener(new View.OnClickListener() {
@@ -79,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(),"Einstellungen wurden gespeichert",Toast.LENGTH_SHORT).show();
             }
         });
+
         buttonSaveTimeWindow = (Button) findViewById(R.id.buttonSaveTimeWindow);
         buttonSaveTimeWindow.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,6 +83,16 @@ public class MainActivity extends AppCompatActivity {
                     addTimeWindow();
             }
         });
+
+        buttonDeleteAllWindows = (Button) findViewById(R.id.buttonDeleteAllWindows);
+        buttonDeleteAllWindows.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleleteWindowList();
+            }
+        });
+
+
         //TextViews einrichten
         textViewTime = (TextView) findViewById(R.id.textViewTime);
         textViewDuration = (TextView) findViewById(R.id.textViewDuration);
@@ -98,16 +105,10 @@ public class MainActivity extends AppCompatActivity {
                 buttonSaveSettings.setEnabled(true);
                 textViewDuration.setText(progress+" Sekunden");
             }
-
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
+            public void onStartTrackingTouch(SeekBar seekBar) {}
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
+            public void onStopTrackingTouch(SeekBar seekBar) {}
         });
 
         //seekBar für Male bis geöffnet wird einrichten
@@ -122,19 +123,29 @@ public class MainActivity extends AppCompatActivity {
                     textViewTime.setText("deaktiviert");
                 }
             }
-
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
+            public void onStartTrackingTouch(SeekBar seekBar){}
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
+            public void onStopTrackingTouch(SeekBar seekBar){}
         });
+
         //init EditTexts
         editTextTitel = (EditText) findViewById(R.id.editTextTitel);
+        editTextTitel.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(editTextTitel.getText().toString().equals("")){
+                    buttonSaveTimeWindow.setEnabled(false);
+                }else{
+                    buttonSaveTimeWindow.setEnabled(true);
+                }
+            }
+        });
 
         editTextDate = (TextView) findViewById(R.id.editTextDate);
         editTextDate.setOnTouchListener(new View.OnTouchListener() {
@@ -156,8 +167,6 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }, year, month, day);
 
-
-
                     datePickerDialog.setOnShowListener(new DialogInterface.OnShowListener() {
                         @Override
                         public void onShow(DialogInterface dialog) {
@@ -165,8 +174,6 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
                     datePickerDialog.show();
-
-
                 }
                 return false;
             }
@@ -200,8 +207,6 @@ public class MainActivity extends AppCompatActivity {
                     });
 
                     timePickerDialog.show();
-
-
                 }
                 return false;
             }
@@ -237,8 +242,6 @@ public class MainActivity extends AppCompatActivity {
                     });
 
                     timePickerDialog.show();
-
-
                 }
                 return false;
             }
@@ -252,27 +255,32 @@ public class MainActivity extends AppCompatActivity {
     void prepareTimeWindowlist(){
         listDataHeader = new ArrayList<String>();
         listDataChild = new HashMap<String, List<String>>();
+        expListView = (ExpandableListView) findViewById(R.id.lvExpTimeWidows);
 
+        //nur zum TESTEN_____________________________________________________________________________
         /*
-        //Titel
-        listDataHeader.add("Feiern");
         listDataHeader.add("Postbote DHL");
-        listDataHeader.add("Postbote HERMES");
+        List<String> data = new ArrayList<String>();
+        data.add("22.01.2019");
+        data.add("11:00"+" bis "+"13:00");
 
-        //Daturm und Uhrzeit zu jewiligen Titel
-        List<String> top250 = new ArrayList<String>();
-        top250.add("The Shawshank Redemption");
+        listDataChild.put(listDataHeader.get(listDataHeader.size()-1), data);
 
-        List<String> nowShowing = new ArrayList<String>();
-        nowShowing.add("The Conjuring");
-
-        List<String> comingSoon = new ArrayList<String>();
-        comingSoon.add("2 Guns");
-
-        listDataChild.put(listDataHeader.get(0), top250); // Header, Child data
-        listDataChild.put(listDataHeader.get(1), nowShowing);
-        listDataChild.put(listDataHeader.get(2), comingSoon);
+        listAdapterGeneralSettings = new ExpandableListAdapter(this, listDataHeader, listDataChild);
+        expListView.setAdapter(listAdapterGeneralSettings);
         */
+        //___________________________________________________________________________________________
+
+        //erweiterbare Liste erstmalig einrichten;
+        listAdapterGeneralSettings = new ExpandableListAdapter(this, listDataHeader, listDataChild);
+        expListView.setAdapter(listAdapterGeneralSettings);
+    }
+
+    void deleleteWindowList(){
+        listDataHeader.clear();
+        listDataChild.clear();
+        expListView.setAdapter(listAdapterGeneralSettings);
+        buttonDeleteAllWindows.setEnabled(false);
     }
 
     void addTimeWindow(){
@@ -286,12 +294,16 @@ public class MainActivity extends AppCompatActivity {
 
             listAdapterGeneralSettings = new ExpandableListAdapter(this, listDataHeader, listDataChild);
             expListView.setAdapter(listAdapterGeneralSettings);
+
+            setEmptyEditTexts();
+            buttonSaveTimeWindow.setEnabled(false);
+            buttonDeleteAllWindows.setEnabled(true);
         }else{
             Toast.makeText(getApplicationContext(),"Füllen Sie alle Felder aus, um ein\n      Zeitfenster hinzuzufügen.",Toast.LENGTH_SHORT).show();
         }
     }
 
-    private boolean validateInputFields(){
+    public boolean validateInputFields(){
         boolean correct =true;
 
         if(editTextDate.getText().toString().equals("")){
@@ -308,6 +320,13 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return correct;
+    }
+
+    private void setEmptyEditTexts(){
+        editTextBis.setText("");
+        editTextVon.setText("");
+        editTextDate.setText("");
+        editTextTitel.setText("");
     }
 
 }
