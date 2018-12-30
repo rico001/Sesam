@@ -3,6 +3,7 @@ package com.example.eisen.sesam;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -22,9 +23,12 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -51,7 +55,12 @@ public class MainActivity extends AppCompatActivity {
 
     DatePickerDialog datePickerDialog;
     TimePickerDialog timePickerDialog;
-    //______________________________________________________________
+
+    //_____________________SAVE DATA________________________________________
+    public static final String SHARED_PREFS = "sharedPrefs";
+    public static final String SAVESETIINGS="savesettings";
+    //__________________________________________________________________
+
     boolean editTextIsTouched=false;
 
 
@@ -81,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                     addTimeWindow();
+                    saveData();
             }
         });
 
@@ -128,6 +138,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar){}
         });
+
 
         //init EditTexts
         editTextTitel = (EditText) findViewById(R.id.editTextTitel);
@@ -327,6 +338,27 @@ public class MainActivity extends AppCompatActivity {
         editTextVon.setText("");
         editTextDate.setText("");
         editTextTitel.setText("");
+    }
+
+    private void saveData(){
+        SettingsModel settingsModel = new SettingsModel(seekBarTime.getProgress(), seekBarHowMany.getProgress(),listDataHeader, listDataChild );
+        Gson gson = new Gson();
+        String json = gson.toJson(settingsModel);
+
+        SettingsModel settingsModelLoad = gson.fromJson(json,SettingsModel.class);
+
+        /*
+        for(int i=0; i<=settingsModel.getListDataHeader().size()-1;i++){
+            Log.v("childs:",settingsModelLoad.getListDataHeader().get(i));
+            Log.v("childs:",settingsModelLoad.getListDataChild().get(settingsModelLoad.getListDataHeader().get(i)).get(0));
+            Log.v("childs:",settingsModelLoad.getListDataChild().get(settingsModelLoad.getListDataHeader().get(i)).get(1));
+        }
+        */
+
+    }
+
+    private void loadData(){
+
     }
 
 }
