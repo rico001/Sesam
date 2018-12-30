@@ -272,7 +272,7 @@ public class MainActivity extends AppCompatActivity {
                             editTextBis.setText(hourOfDay+":"+minute);
                         }
 
-                    },23,59,true);
+                    },00,00,true);
 
                     timePickerDialog.setOnShowListener(new DialogInterface.OnShowListener() {
                         @Override
