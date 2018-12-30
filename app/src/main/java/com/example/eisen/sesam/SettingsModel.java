@@ -1,6 +1,7 @@
 package com.example.eisen.sesam;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 public class SettingsModel {
@@ -9,6 +10,13 @@ public class SettingsModel {
     private int times;
     private List<String> listDataHeader;
     private HashMap<String, List<String>> listDataChild;
+
+    public SettingsModel(){
+        this.duration = 4;
+        this.times=2;
+        this.listDataHeader=new LinkedList<>();
+        this.listDataChild=new HashMap<>();
+    }
 
     public SettingsModel(int duration, int times, List<String> listDataHeader, HashMap<String,List<String>> listDataChild ){
         this.duration = duration;

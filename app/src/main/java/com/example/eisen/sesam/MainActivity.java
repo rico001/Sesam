@@ -33,12 +33,12 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    SettingsModel settingsModel;
+    SettingsModel settingsModel=new SettingsModel();
 
     ExpandableListView expListView;
     ExpandableListAdapter listAdapterGeneralSettings;
-    List<String> listDataHeader;
-    HashMap<String, List<String>> listDataChild;
+    List<String> listDataHeader = new ArrayList<String>();;
+    HashMap<String, List<String>> listDataChild = new HashMap<String, List<String>>();;
 
     Button buttonSaveSettings;
     Button buttonSaveTimeWindow;
@@ -62,7 +62,6 @@ public class MainActivity extends AppCompatActivity {
     //_____________________SAVE DATA________________________________________
     public static final String SHARED_PREFS = "sharedPrefs";
     public static final String SAVESETIINGS="savesettings";
-    private String jsonLoad;
     //__________________________________________________________________
 
     boolean editTextIsTouched=false;
@@ -72,13 +71,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        prepareTimeWindowlist();
+        loadData();
+        initTimeWindowlist();
         initButtons();
         initSeekBars();
         initEditTexts();
         initTextViews();
     }
-
 
     void initButtons(){
         //TestButton
@@ -112,6 +111,9 @@ public class MainActivity extends AppCompatActivity {
         });
 
         buttonDeleteAllWindows = (Button) findViewById(R.id.buttonDeleteAllWindows);
+        if(settingsModel.getListDataHeader().size()>0) {
+            buttonDeleteAllWindows.setEnabled(true);
+        }
         buttonDeleteAllWindows.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -284,26 +286,9 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    void prepareTimeWindowlist(){
-        listDataHeader = new ArrayList<String>();
-        listDataChild = new HashMap<String, List<String>>();
+    void initTimeWindowlist(){
         expListView = (ExpandableListView) findViewById(R.id.lvExpTimeWidows);
-
-        //nur zum TESTEN_____________________________________________________________________________
-        /*
-        listDataHeader.add("Postbote DHL");
-        List<String> data = new ArrayList<String>();
-        data.add("22.01.2019");
-        data.add("11:00"+" bis "+"13:00");
-
-        listDataChild.put(listDataHeader.get(listDataHeader.size()-1), data);
-
-        listAdapterGeneralSettings = new ExpandableListAdapter(this, listDataHeader, listDataChild);
-        expListView.setAdapter(listAdapterGeneralSettings);
-        */
-        //___________________________________________________________________________________________
-
-        //erweiterbare Liste erstmalig einrichten;
+        initFillWindowList();
         listAdapterGeneralSettings = new ExpandableListAdapter(this, listDataHeader, listDataChild);
         expListView.setAdapter(listAdapterGeneralSettings);
     }
@@ -372,18 +357,49 @@ public class MainActivity extends AppCompatActivity {
         editor.commit();
     }
 
+    /**
+     * aktualisiert settingsModel, sofern Speicherstand existiert
+     */
     private void loadData(){
 
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS,MODE_PRIVATE);
-        jsonLoad = sharedPreferences.getString(SAVESETIINGS,"");
+        if(sharedPreferences.contains(SAVESETIINGS)) {
 
-        Gson gson = new Gson();
-        SettingsModel settingsModelLoad = gson.fromJson(jsonLoad,SettingsModel.class);
+            String jsonLoad= sharedPreferences.getString(SAVESETIINGS, "");
+            Log.d("test", jsonLoad);
+            Gson gson = new Gson();
+            settingsModel = gson.fromJson(jsonLoad, SettingsModel.class);
 
-        try{
-            Log.d("test",settingsModelLoad.getListDataHeader().get(0));
-        }catch (NullPointerException e){
-            Log.d("test","NUllPoitnterException");
+            if (settingsModel.getListDataHeader().size() > 0 && settingsModel.getListDataHeader() != null) {
+                Log.d("test", settingsModel.getListDataHeader().get(0));
+            } else {
+                if (settingsModel.getListDataHeader() == null) {
+                    Log.d("test", "dataheader is null");
+                }
+                if (settingsModel.getListDataHeader().size() == 0) {
+                    Log.d("test", "dataheader nicht belegt mit infos");
+                }
+            }
+
+        }else{
+            Log.d("test", "SAVESETTINGS existiert noch nicht");
+            Log.d("test", settingsModel.getListDataHeader().size()+"");
+        }
+    }
+
+    /**
+     * befüllt WIndowlist, wenn ggf settingsModel bereits Daten enthält (abh. von loadData())
+     */
+    private void initFillWindowList(){
+        Log.d("anzahl", "dataheader nicht belegt mit infos");
+        if(settingsModel.getListDataHeader().size()>0){
+            for(int i=0; i<=settingsModel.getListDataHeader().size()-1;i++){
+                listDataHeader.add(settingsModel.getListDataHeader().get(i));
+                List<String> data = new ArrayList<String>();
+                data.add(settingsModel.getListDataChild().get(settingsModel.getListDataHeader().get(i)).get(0));
+                data.add(settingsModel.getListDataChild().get(settingsModel.getListDataHeader().get(i)).get(1));
+                listDataChild.put(settingsModel.getListDataHeader().get(i), data);
+            }
         }
     }
 

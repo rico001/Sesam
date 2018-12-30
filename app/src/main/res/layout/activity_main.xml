@@ -14,12 +14,6 @@
         android:padding="5dp">
 
 
-        <Button
-            android:id="@+id/testButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="loadData()" />
-
         <TextView
             android:id="@+id/textView"
             android:layout_width="match_parent"
@@ -130,6 +124,12 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/testButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="loadData()" />
 
             <EditText
                 android:id="@+id/editTextVon"
