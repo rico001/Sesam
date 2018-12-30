@@ -135,6 +135,7 @@ public class MainActivity extends AppCompatActivity {
     void initSeekBars(){
         //seekBar für Öffnungsdauer einrichten
         seekBarTime = (SeekBar) findViewById(R.id.seekBarTime);
+        seekBarTime.setProgress(settingsModel.getDuration());
         seekBarTime.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -149,6 +150,7 @@ public class MainActivity extends AppCompatActivity {
 
         //seekBar für Male bis geöffnet wird einrichten
         seekBarHowMany = (SeekBar) findViewById(R.id.seekBarHowMany);
+        seekBarHowMany.setProgress(settingsModel.getTimes());
         seekBarHowMany.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {

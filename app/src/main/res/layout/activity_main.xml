@@ -129,7 +129,8 @@
                 android:id="@+id/testButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="loadData()" />
+                android:text="loadData()"
+                android:visibility="gone" />
 
             <EditText
                 android:id="@+id/editTextVon"
@@ -185,6 +186,7 @@
         android:layout_gravity="bottom"
         android:layout_marginBottom="10dp"
         android:enabled="false"
-        android:text="Lösche Alle Zeitfenster" />
+        android:text="Lösche Alle Zeitfenster"
+        android:visibility="visible" />
 
 </LinearLayout>
