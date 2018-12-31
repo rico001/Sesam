@@ -93,7 +93,6 @@
             style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
             android:enabled="false"
             android:text="Einstellungen speichern" />
 
@@ -102,7 +101,7 @@
             android:id="@+id/textView7"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5dp"
             android:background="@color/colorPrimary"
             android:paddingLeft="115dp"
             android:paddingTop="5dp"
@@ -185,7 +184,7 @@
         android:id="@+id/lvExpTimeWidows"
         style="@android:style/Widget.DeviceDefault.ExpandableListView"
         android:layout_width="match_parent"
-        android:layout_height="130dp"
+        android:layout_height="30dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"></ExpandableListView>
 
@@ -199,5 +198,11 @@
         android:enabled="false"
         android:text="Lösche Alle Zeitfenster"
         android:visibility="visible" />
+
+    <android.support.design.widget.BottomNavigationView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"></android.support.design.widget.BottomNavigationView>
+
 
 </LinearLayout>
