@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
     TimePickerDialog timePickerDialog;
 
     //_____________________SAVE DATA________________________________________
-    public static final String SHARED_PREFS = "sharedPrefs";
+    public static final String SHARED_PREFS = "sharedPrefs" ;
     public static final String SAVESETIINGS="savesettings";
     //__________________________________________________________________
 
