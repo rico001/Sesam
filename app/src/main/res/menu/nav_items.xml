@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:icon="@drawable/baseline_vpn_key_black_24dp"
+        android:title="Tür öffnen" />
+    <item
+        android:icon="@drawable/baseline_settings_black_24dp"
+        android:title="Einstellungem" />
+    <item
+        android:icon="@drawable/baseline_access_time_black_24dp"
+        android:title="Zeitfenster" />
+</menu>

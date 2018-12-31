@@ -184,7 +184,8 @@
         android:id="@+id/lvExpTimeWidows"
         style="@android:style/Widget.DeviceDefault.ExpandableListView"
         android:layout_width="match_parent"
-        android:layout_height="30dp"
+        android:layout_height="88dp"
+        android:layout_gravity="top"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"></ExpandableListView>
 
@@ -201,8 +202,10 @@
 
     <android.support.design.widget.BottomNavigationView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"></android.support.design.widget.BottomNavigationView>
+        android:layout_height="51dp"
+        android:layout_gravity="end"
+        android:background="@color/colorPrimary"
+        app:menu="@menu/nav_items"></android.support.design.widget.BottomNavigationView>
 
 
 </LinearLayout>
