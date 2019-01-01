@@ -7,205 +7,28 @@
     android:background="#c2c2c2"
     android:orientation="vertical">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="5dp">
+        android:layout_height="wrap_content">
 
-
-        <TextView
-            android:id="@+id/textView"
+        <FrameLayout
+            android:id="@+id/main_frame"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
+            android:layout_height="match_parent">
+
+
+        </FrameLayout>
+
+        <android.support.design.widget.BottomNavigationView
+            android:id="@+id/main_nav"
+            android:layout_width="match_parent"
+            android:layout_height="51dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="end"
             android:background="@color/colorPrimary"
-            android:paddingLeft="115dp"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:text="Allgemeine Einstellungen"
-            android:textColor="@android:color/background_light" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:paddingStart="16dip"
-            android:paddingTop="5dip"
-            android:paddingBottom="16dip">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:width="200dp"
-                android:text="Klingeln bis Tür geöffnet wird:" />
-
-            <TextView
-                android:id="@+id/textViewTime"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="1 Mal"
-                android:textColor="@color/colorPrimary" />
-
-        </LinearLayout>
-
-        <SeekBar
-            android:id="@+id/seekBarHowMany"
-            style="@style/Widget.AppCompat.SeekBar.Discrete"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:max="3"
-            android:progress="2" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:paddingStart="16dip"
-            android:paddingTop="5dip"
-            android:paddingBottom="16dip">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:width="200dp"
-                android:text="Öffnungsdauer:" />
-
-            <TextView
-                android:id="@+id/textViewDuration"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="1 Sekunde"
-                android:textColor="@color/colorPrimary" />
-
-        </LinearLayout>
-
-        <SeekBar
-            android:id="@+id/seekBarTime"
-            style="@style/Widget.AppCompat.SeekBar.Discrete"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:max="5"
-            android:progress="3" />
-
-        <Button
-            android:id="@+id/buttonSaveSettings"
-            style="@style/Widget.AppCompat.Button.Colored"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:enabled="false"
-            android:text="Einstellungen speichern" />
-
-
-        <TextView
-            android:id="@+id/textView7"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:background="@color/colorPrimary"
-            android:paddingLeft="115dp"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:text="Zeitfenster hinzufügen"
-            android:textColor="@android:color/background_light" />
-
-        <EditText
-            android:id="@+id/editTextTitel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="Titel"
-            android:inputType="textPersonName" />
-
-        <EditText
-            android:id="@+id/editTextDate"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="Date"
-            android:inputType="date" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/testButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="loadData()"
-                android:visibility="gone" />
-
-            <EditText
-                android:id="@+id/editTextVon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:ems="10"
-                android:hint="von"
-                android:inputType="time" />
-
-            <EditText
-                android:id="@+id/editTextBis"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:ems="10"
-                android:hint="bis "
-                android:inputType="time" />
-
-            <Button
-                android:id="@+id/buttonSaveTimeWindow"
-                style="@style/Widget.AppCompat.Button.Colored"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="2dp"
-                android:enabled="false"
-                android:text="hinzufügen" />
-
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/textView10"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:background="@color/colorPrimary"
-            android:paddingLeft="130dp"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:text="meine Zeitfenster"
-            android:textColor="@android:color/background_light" />
-
-    </LinearLayout>
-
-    <ExpandableListView
-        android:id="@+id/lvExpTimeWidows"
-        style="@android:style/Widget.DeviceDefault.ExpandableListView"
-        android:layout_width="match_parent"
-        android:layout_height="88dp"
-        android:layout_gravity="top"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"></ExpandableListView>
-
-    <Button
-        android:id="@+id/buttonDeleteAllWindows"
-        style="@style/Widget.AppCompat.Button.Colored"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:layout_marginBottom="10dp"
-        android:enabled="false"
-        android:text="Lösche Alle Zeitfenster"
-        android:visibility="visible" />
-
-    <android.support.design.widget.BottomNavigationView
-        android:layout_width="match_parent"
-        android:layout_height="51dp"
-        android:layout_gravity="end"
-        android:background="@color/colorPrimary"
-        app:menu="@menu/nav_items"></android.support.design.widget.BottomNavigationView>
+            app:menu="@menu/nav_items"></android.support.design.widget.BottomNavigationView>
+    </RelativeLayout>
 
 
 </LinearLayout>

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SettingsFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="5dp">
+
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:background="@color/colorPrimary"
+            android:paddingLeft="115dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:text="Allgemeine Einstellungen"
+            android:textColor="@android:color/background_light" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:paddingStart="16dip"
+            android:paddingTop="5dip"
+            android:paddingBottom="16dip">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:width="200dp"
+                android:text="Klingeln bis Tür geöffnet wird:" />
+
+            <TextView
+                android:id="@+id/textViewHowMany2"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="1 Mal"
+                android:textColor="@color/colorPrimary" />
+
+        </LinearLayout>
+
+        <SeekBar
+            android:id="@+id/seekBarHowMany2"
+            style="@style/Widget.AppCompat.SeekBar.Discrete"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="3"
+            android:progress="2" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:paddingStart="16dip"
+            android:paddingTop="5dip"
+            android:paddingBottom="16dip">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:width="200dp"
+                android:text="Öffnungsdauer:" />
+
+            <TextView
+                android:id="@+id/textViewDuration2"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="1 Sekunde"
+                android:textColor="@color/colorPrimary" />
+
+        </LinearLayout>
+
+        <SeekBar
+            android:id="@+id/seekBarDuration2"
+            style="@style/Widget.AppCompat.SeekBar.Discrete"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="5"
+            android:progress="3" />
+
+        <Button
+            android:id="@+id/buttonSaveSettings2"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:enabled="false"
+            android:text="Einstellungen speichern" />
+
+
+    </LinearLayout>
+
+</FrameLayout>
