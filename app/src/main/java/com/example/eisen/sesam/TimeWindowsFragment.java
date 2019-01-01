@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -27,6 +28,8 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -171,7 +174,7 @@ public class TimeWindowsFragment extends Fragment {
             listDataHeader.add(editTextTitel.getText().toString());
             List<String> data = new ArrayList<String>();
             data.add(editTextDate.getText().toString());
-            data.add(editTextVon.getText().toString()+" bis "+editTextBis.getText().toString());
+            data.add(editTextVon.getText().toString()+"Uhr bis "+editTextBis.getText().toString()+"Uhr");
 
             listDataChild.put(listDataHeader.get(listDataHeader.size()-1), data);
 
@@ -189,6 +192,7 @@ public class TimeWindowsFragment extends Fragment {
     void initEditTexts(){
         //init EditTexts
         editTextTitel = (EditText) getView().findViewById(R.id.editTextTitel2);
+
         editTextTitel.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -221,14 +225,15 @@ public class TimeWindowsFragment extends Fragment {
                     datePickerDialog = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
                         @Override
                         public void onDateSet(DatePicker view, int mYear, int mMonth, int dayOfMonth) {
-
                             editTextDate.setText(dayOfMonth + "." + (mMonth + 1) + "." + mYear);
+                            closeKeyboard();
                         }
                     }, year, month, day);
 
                     datePickerDialog.setOnShowListener(new DialogInterface.OnShowListener() {
                         @Override
                         public void onShow(DialogInterface dialog) {
+
                             editTextIsTouched = false;
                         }
                     });
@@ -253,10 +258,11 @@ public class TimeWindowsFragment extends Fragment {
                     timePickerDialog = new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener() {
                         @Override
                         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                            editTextVon.setText(hourOfDay+":"+minute);
+                            String timeText= formatTime(hourOfDay,minute);
+                            editTextVon.setText(timeText);
                         }
 
-                    },hour,min,true);
+                    },hour,min,android.text.format.DateFormat.is24HourFormat(getActivity()));
 
                     timePickerDialog.setOnShowListener(new DialogInterface.OnShowListener() {
                         @Override
@@ -288,10 +294,11 @@ public class TimeWindowsFragment extends Fragment {
                     timePickerDialog = new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener() {
                         @Override
                         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                            editTextBis.setText(hourOfDay+":"+minute);
+                            String timeText= formatTime(0,0);
+                            editTextBis.setText(timeText);
                         }
 
-                    },00,00,true);
+                    },00,00,android.text.format.DateFormat.is24HourFormat(getActivity()));
 
                     timePickerDialog.setOnShowListener(new DialogInterface.OnShowListener() {
                         @Override
@@ -338,5 +345,31 @@ public class TimeWindowsFragment extends Fragment {
         }
 
         return correct;
+    }
+
+    private void closeKeyboard(){
+        View view = getActivity().getCurrentFocus();
+        if(view!=null){
+            InputMethodManager imm= (InputMethodManager) getActivity().getSystemService((Context.INPUT_METHOD_SERVICE));
+            imm.hideSoftInputFromWindow(view.getWindowToken(),0);
+        }
+    }
+
+    private String formatTime(int hour, int min) {
+        String time = "";
+
+        if (hour < 10){
+            time+="0"+hour+":";
+        }else{
+            time+=hour+":";
+        }
+
+        if (min < 10){
+            time+="0"+min;
+        }else{
+            time+=min;
+        }
+
+        return time;
     }
 }
