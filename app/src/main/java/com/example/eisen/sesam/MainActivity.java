@@ -65,17 +65,17 @@ public class MainActivity extends AppCompatActivity {
                 switch(menuItem.getItemId()){
 
                     case R.id.nav_open:
-                        mMainNav.setItemBackgroundResource(R.color.colorAccent);
+                        //mMainNav.setItemBackgroundResource(R.color.colorAccent);
                         setFragment(openDoorFragment);
                         return true;
 
                     case R.id.nav_timewidows:
-                        mMainNav.setItemBackgroundResource(R.color.colorAccent);
+                        //mMainNav.setItemBackgroundResource(R.color.colorAccent);
                         setFragment(timeWindowsFragment);
                         return true;
 
                     case R.id.nav_settings:
-                        mMainNav.setItemBackgroundResource(R.color.colorAccent);
+                        //mMainNav.setItemBackgroundResource(R.color.colorAccent);
                         setFragment(settingsFragment);
                         return true;
 
