@@ -16,6 +16,16 @@ import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import org.eclipse.paho.android.service.MqttAndroidClient;
+import org.eclipse.paho.client.mqttv3.IMqttActionListener;
+import org.eclipse.paho.client.mqttv3.IMqttToken;
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+
+import java.io.UnsupportedEncodingException;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -39,6 +49,7 @@ public class OpenDoorFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        createMQTTclient();
 
         imageView= (ImageView) getView().findViewById(R.id.imageViewBsp);
         buttonOpenDoor= (Button) getView().findViewById(R.id.buttonOpenDoor);
@@ -47,11 +58,67 @@ public class OpenDoorFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 startAnim(5);
+                publishOnMQQTserver();
             }
         });
     }
 
     private void startAnim(int sek){
         Log.d("aimation", "animation läuft");
+        imageView.setVisibility(imageView.getVisibility()+10);
     }
+
+
+    //MQTTkram________________________________________________________________________________________________-später auslagern
+
+    MqttAndroidClient client;
+    String server="tcp://192.168.178.80:1883";
+    private void createMQTTclient(){
+        String clientId = "SesamApp-"+MqttClient.generateClientId();
+        client = new MqttAndroidClient(getActivity().getApplicationContext(), server, clientId);
+
+        try {
+            //Optionen init
+            MqttConnectOptions options = new MqttConnectOptions();
+            options.setMqttVersion(MqttConnectOptions.MQTT_VERSION_3_1);
+            String topic = "hello/world";
+            byte[] payload = "letzterWille -SesamApp".getBytes();
+            options.setWill(topic, payload ,1,false);           //letzter publish nach abdanken
+            //client verbinden
+            IMqttToken token = client.connect(options);
+            token.setActionCallback(new IMqttActionListener() {
+                @Override
+                public void onSuccess(IMqttToken asyncActionToken) {
+                    // We are connected
+                    Log.d("mqtt", "onSuccess");
+                }
+
+                @Override
+                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                    // Something went wrong e.g. connection timeout or firewall problems
+                    Log.d("mqtt", "onFailure");
+
+                }
+
+
+            });
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void publishOnMQQTserver(){
+        String topic = "hello/world";
+        String payload = "Publish by SesamApp";
+        byte[] encodedPayload = new byte[0];
+        try {
+            encodedPayload = payload.getBytes("UTF-8");
+            MqttMessage message = new MqttMessage(encodedPayload);
+            client.publish(topic, message);
+        } catch (UnsupportedEncodingException | MqttException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 }
