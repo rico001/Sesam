@@ -135,11 +135,15 @@ public class SettingsFragment extends Fragment {
         settingsModel.setTimes(seekBarHowMany.getProgress());
         Gson gson = new Gson();
         String jsonSave = gson.toJson(settingsModel);
-
         SharedPreferences sharedPreferences = this.getActivity().getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(SAVESETIINGS, jsonSave);
         editor.commit();
+        sendDataToServer(jsonSave);
+    }
+
+    private void sendDataToServer(String data){
+        ((MainActivity)getActivity()).pub(data);
     }
 
 

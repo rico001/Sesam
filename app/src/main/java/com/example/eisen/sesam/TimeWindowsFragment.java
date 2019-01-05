@@ -167,6 +167,7 @@ public class TimeWindowsFragment extends Fragment {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(SAVESETIINGS, jsonSave);
         editor.commit();
+        sendDataToServer(jsonSave);
     }
 
     void addTimeWindow(){
@@ -371,5 +372,9 @@ public class TimeWindowsFragment extends Fragment {
         }
 
         return time;
+    }
+
+    private void sendDataToServer(String data){
+        ((MainActivity)getActivity()).pub(data);
     }
 }

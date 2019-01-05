@@ -30,6 +30,9 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 
+import org.eclipse.paho.client.mqttv3.MqttCallback;
+import org.eclipse.paho.client.mqttv3.MqttException;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -54,11 +57,18 @@ public class MainActivity extends AppCompatActivity {
     private SettingsFragment settingsFragment = new SettingsFragment();
     private TimeWindowsFragment timeWindowsFragment = new TimeWindowsFragment();
 
+    //_______________________________________________________________________
+
+    MqttHelper mqttHelper;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mqttHelper = new MqttHelper(getApplicationContext());
+
         mMainNav = (BottomNavigationView) findViewById(R.id.main_nav);
         setFragment(openDoorFragment);
         mMainNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -86,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
 
        // loadData();
     }
@@ -121,6 +132,14 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.main_frame, fragment);
         fragmentTransaction.commit();
+    }
+
+    public void pub(String message){
+        try {
+            mqttHelper.publishMessage(message, 0);
+        }catch(Exception e){
+            Log.d("Mqtt", "Publish Fehler von MainActivity");
+        }
     }
 
 }
