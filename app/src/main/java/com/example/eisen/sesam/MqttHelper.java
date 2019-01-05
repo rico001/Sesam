@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
+import org.eclipse.paho.android.service.MqttTraceHandler;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
@@ -12,18 +13,22 @@ import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+import android.databinding.*;
 
 import java.io.UnsupportedEncodingException;
 
-public class MqttHelper {
-    public MqttAndroidClient mqttAndroidClient;
 
-    final String serverIP = "tcp://192.168.178.80:1883";
+public class MqttHelper extends BaseObservable{
 
+    private MqttAndroidClient mqttAndroidClient;
+
+    final String serverIP = "tcp://192.168.178.80:1883";        //raspi bzw mqttServer
     final String clientId = "ExampleAndroidClient";
-    final String subscriptionTopic = "Sesam/Settings/date";
+    final String subscriptionTopic = "Sesam/Esp/state";         //for Button SofortÖffnen
+    final String publishTopic = "Sesam/Settings/date";          //for ESP
 
-    public MqttHelper(Context context){
+
+    public MqttHelper(final Context context){
         mqttAndroidClient = new MqttAndroidClient(context, serverIP, clientId);
         mqttAndroidClient.setCallback(new MqttCallback() {
             @Override
@@ -33,12 +38,12 @@ public class MqttHelper {
 
             @Override
             public void messageArrived(String topic, MqttMessage message) throws Exception {
-                Log.d("Mqtt", "Message arrived" +message+ serverIP);
+                Log.d("Mqtt", "Message arrived:  " +message.toString()+ serverIP);
             }
 
             @Override
             public void deliveryComplete(IMqttDeliveryToken token) {
-                Log.d("Mqtt", "delivery Complete" + serverIP);
+                Log.d("Mqtt", "delivery Complete from " +serverIP);
             }
         });
 
@@ -68,7 +73,6 @@ public class MqttHelper {
 
     }
 
-
     private void subscribeToTopic() {
         try {
             mqttAndroidClient.subscribe(subscriptionTopic, 0, null, new IMqttActionListener() {
@@ -95,7 +99,19 @@ public class MqttHelper {
         MqttMessage message = new MqttMessage(encodedPayload);
         message.setRetained(false); //nachrichten mit true kommen öfter(bis trueMessage überschrieben) an auch nachdem nachricht mit false gesendet wurde!!
         message.setQos(qos);
-        mqttAndroidClient.publish(subscriptionTopic, message);
+        mqttAndroidClient.publish(publishTopic, message);
     }
+
+    public void publishMessageTo(String msg, int qos, String anyTopic)
+            throws MqttException, UnsupportedEncodingException {
+        byte[] encodedPayload = new byte[0];
+        encodedPayload = msg.getBytes("UTF-8");
+        MqttMessage message = new MqttMessage(encodedPayload);
+        message.setRetained(false); //nachrichten mit true kommen öfter(bis trueMessage überschrieben) an auch nachdem nachricht mit false gesendet wurde!!
+        message.setQos(qos);
+        mqttAndroidClient.publish(anyTopic, message);
+    }
+
+
 
 }

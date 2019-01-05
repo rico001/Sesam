@@ -1,46 +1,24 @@
 package com.example.eisen.sesam;
 
-import android.app.DatePickerDialog;
-import android.app.TimePickerDialog;
-import android.content.Context;
-import android.content.DialogInterface;
+
 import android.content.SharedPreferences;
+import android.databinding.ObservableBoolean;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
+
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.DatePicker;
-import android.widget.EditText;
-import android.widget.ExpandableListView;
-import android.widget.FrameLayout;
-import android.widget.SeekBar;
-import android.widget.TextView;
-import android.widget.TimePicker;
-import android.widget.Toast;
-
 import com.google.gson.Gson;
 
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
-import org.eclipse.paho.client.mqttv3.MqttException;
-
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 public class MainActivity extends AppCompatActivity {
-
-    SettingsModel settingsModel=new SettingsModel();
 
     //_____________________SAVE DATA_____________________________________
     public static final String SHARED_PREFS = "sharedPrefs" ;
@@ -50,7 +28,6 @@ public class MainActivity extends AppCompatActivity {
 
     //-----Menu
     private BottomNavigationView mMainNav;
-    private FrameLayout mMainFrame;
 
     //_____________Fragments_________________________________________________
     private OpenDoorFragment openDoorFragment = new OpenDoorFragment();
@@ -61,7 +38,6 @@ public class MainActivity extends AppCompatActivity {
 
     MqttHelper mqttHelper;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
         mqttHelper = new MqttHelper(getApplicationContext());
 
+        //Menü einrichten
         mMainNav = (BottomNavigationView) findViewById(R.id.main_nav);
         setFragment(openDoorFragment);
         mMainNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -101,33 +78,6 @@ public class MainActivity extends AppCompatActivity {
        // loadData();
     }
 
-    private void loadData(){
-
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS,MODE_PRIVATE);
-        if(sharedPreferences.contains(SAVESETIINGS)) {
-
-            String jsonLoad= sharedPreferences.getString(SAVESETIINGS, "");
-            Log.d("test", jsonLoad);
-            Gson gson = new Gson();
-            settingsModel = gson.fromJson(jsonLoad, SettingsModel.class);
-
-            if (settingsModel.getListDataHeader().size() > 0 && settingsModel.getListDataHeader() != null) {
-                Log.d("test", settingsModel.getListDataHeader().get(0));
-            } else {
-                if (settingsModel.getListDataHeader() == null) {
-                    Log.d("test", "dataheader is null");
-                }
-                if (settingsModel.getListDataHeader().size() == 0) {
-                    Log.d("test", "dataheader nicht belegt mit infos");
-                }
-            }
-
-        }else{
-            Log.d("test", "SAVESETTINGS existiert noch nicht");
-            Log.d("test", settingsModel.getListDataHeader().size()+"");
-        }
-    }
-
     private void setFragment(Fragment fragment){
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.main_frame, fragment);
@@ -137,6 +87,14 @@ public class MainActivity extends AppCompatActivity {
     public void pub(String message){
         try {
             mqttHelper.publishMessage(message, 0);
+        }catch(Exception e){
+            Log.d("Mqtt", "Publish Fehler von MainActivity");
+        }
+    }
+
+    public void pubTo(String message, String anyTopic){
+        try {
+            mqttHelper.publishMessageTo(message,0,anyTopic);
         }catch(Exception e){
             Log.d("Mqtt", "Publish Fehler von MainActivity");
         }
