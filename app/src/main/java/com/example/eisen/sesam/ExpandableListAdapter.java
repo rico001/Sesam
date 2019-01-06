@@ -43,12 +43,22 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     public View getChildView(int groupPosition, final int childPosition,
                              boolean isLastChild, View convertView, ViewGroup parent) {
 
-        final String childText = (String) getChild(groupPosition, childPosition);
+        String childText = (String) getChild(groupPosition, childPosition);
 
         if (convertView == null) {
             LayoutInflater infalInflater = (LayoutInflater) this._context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = infalInflater.inflate(R.layout.general_settings_item, null);
+        }
+
+        if(childPosition==0){
+            childText="am "+childText;
+        }
+        if(childPosition==1){
+            childText="ab  "+childText+" Uhr";
+        }
+        if(childPosition==2){
+            childText="bis "+childText+" Uhr";
         }
 
         TextView txtListChild = (TextView) convertView

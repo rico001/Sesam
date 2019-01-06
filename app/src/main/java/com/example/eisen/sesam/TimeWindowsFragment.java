@@ -104,6 +104,7 @@ public class TimeWindowsFragment extends Fragment {
                 List<String> data = new ArrayList<String>();
                 data.add(settingsModel.getListDataChild().get(settingsModel.getListDataHeader().get(i)).get(0));
                 data.add(settingsModel.getListDataChild().get(settingsModel.getListDataHeader().get(i)).get(1));
+                data.add(settingsModel.getListDataChild().get(settingsModel.getListDataHeader().get(i)).get(2));
                 listDataChild.put(settingsModel.getListDataHeader().get(i), data);
             }
         }
@@ -171,7 +172,8 @@ public class TimeWindowsFragment extends Fragment {
             listDataHeader.add(editTextTitel.getText().toString());
             List<String> data = new ArrayList<String>();
             data.add(editTextDate.getText().toString());
-            data.add(editTextVon.getText().toString()+"Uhr bis "+editTextBis.getText().toString()+"Uhr");
+            data.add(editTextVon.getText().toString());
+            data.add(editTextBis.getText().toString());
 
             listDataChild.put(listDataHeader.get(listDataHeader.size()-1), data);
 

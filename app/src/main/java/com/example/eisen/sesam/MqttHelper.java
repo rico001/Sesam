@@ -43,7 +43,9 @@ public class MqttHelper extends BaseObservable{
 
             @Override
             public void deliveryComplete(IMqttDeliveryToken token) {
-                Log.d("Mqtt", "delivery Complete from " +serverIP);
+                try {
+                    Log.d("Mqtt", token.getMessage().toString());
+                }catch(Exception e){}
             }
         });
 
