@@ -1,8 +1,7 @@
 package com.example.eisen.sesam;
 
 
-import android.content.SharedPreferences;
-import android.databinding.ObservableBoolean;
+
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
@@ -12,12 +11,6 @@ import android.os.Bundle;
 
 import android.util.Log;
 import android.view.MenuItem;
-import com.google.gson.Gson;
-
-import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
-import org.eclipse.paho.client.mqttv3.MqttCallback;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
-
 public class MainActivity extends AppCompatActivity {
 
     //_____________________SAVE DATA_____________________________________
@@ -82,14 +75,6 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.main_frame, fragment);
         fragmentTransaction.commit();
-    }
-
-    public void pub(String message){
-        try {
-            mqttHelper.publishMessage(message, 0);
-        }catch(Exception e){
-            Log.d("Mqtt", "Publish Fehler von MainActivity");
-        }
     }
 
     public void pubTo(String message, String anyTopic){

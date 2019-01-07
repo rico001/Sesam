@@ -23,9 +23,8 @@ public class MqttHelper extends BaseObservable{
     private MqttAndroidClient mqttAndroidClient;
 
     final String serverIP = "tcp://192.168.178.80:1883";        //raspi bzw mqttServer
-    final String clientId = "ExampleAndroidClient";
+    final String clientId = "SesamApp";
     final String subscriptionTopic = "Sesam/Esp/state";         //for Button SofortÖffnen
-    final String publishTopic = "Sesam/Settings/date";          //for ESP
 
 
     public MqttHelper(final Context context){
@@ -92,16 +91,6 @@ public class MqttHelper extends BaseObservable{
             System.err.println("Exceptionst subscribing");
             ex.printStackTrace();
         }
-    }
-
-    public void publishMessage(String msg, int qos)
-            throws MqttException, UnsupportedEncodingException {
-        byte[] encodedPayload = new byte[0];
-        encodedPayload = msg.getBytes("UTF-8");
-        MqttMessage message = new MqttMessage(encodedPayload);
-        message.setRetained(false); //nachrichten mit true kommen öfter(bis trueMessage überschrieben) an auch nachdem nachricht mit false gesendet wurde!!
-        message.setQos(qos);
-        mqttAndroidClient.publish(publishTopic, message);
     }
 
     public void publishMessageTo(String msg, int qos, String anyTopic)

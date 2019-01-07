@@ -1,5 +1,12 @@
 package com.example.eisen.sesam;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -57,6 +64,40 @@ public class SettingsModel {
 
     public void setListDataChild(HashMap<String, List<String>> listDataChild) {
         this.listDataChild = listDataChild;
+    }
+
+    public static String createDatesStringforMqtt(SettingsModel s){
+        String date="";
+        String time1="";
+        String time2="";
+
+        if(s.getListDataHeader().size()>0){
+            for(int i=0; i<=s.getListDataHeader().size()-1;i++){
+                date+=s.getListDataChild().get(s.getListDataHeader().get(i)).get(0);
+                time1+=s.getListDataChild().get(s.getListDataHeader().get(i)).get(1);
+                time2+=s.getListDataChild().get(s.getListDataHeader().get(i)).get(2);
+
+                if(i!=s.getListDataHeader().size()-1){
+                    date+="#";
+                    time1+="#";
+                    time2+="#";
+                }
+            }
+        }
+
+        String dataReady="";
+
+        if(date.length()!=0){
+            dataReady = date + "|" + time1 + "|" + time2;
+        }
+
+
+        return dataReady;
+    }
+
+    public static String createBehaviorStringforMqtt(SettingsModel s){
+       String behavior =s.getTimes()+""+s.getDuration();
+        return behavior;
     }
 
 }

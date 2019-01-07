@@ -37,6 +37,7 @@ public class SettingsFragment extends Fragment {
     //________________SAVEDATA_______________
     public static final String SHARED_PREFS = "sharedPrefs" ;
     public static final String SAVESETIINGS="savesettings";
+    final String publishTopic = "Sesam/Settings/behavior";          //for ESP
 
     public SettingsFragment() {
 
@@ -139,11 +140,13 @@ public class SettingsFragment extends Fragment {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(SAVESETIINGS, jsonSave);
         editor.commit();
-        sendDataToServer(jsonSave);
+        sendDataToServer(settingsModel);
     }
 
-    private void sendDataToServer(String data){
-        ((MainActivity)getActivity()).pub(data);
+    private void sendDataToServer(SettingsModel s){
+         String data = "";
+         data = SettingsModel.createBehaviorStringforMqtt(s);
+        ((MainActivity)getActivity()).pubTo(data,publishTopic);
     }
 
 

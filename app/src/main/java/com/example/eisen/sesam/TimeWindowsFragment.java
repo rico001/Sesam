@@ -62,6 +62,8 @@ public class TimeWindowsFragment extends Fragment {
 
     boolean editTextIsTouched=false;
 
+    final String publishTopic = "Sesam/Settings/date";          //for ESP
+
 
 
 
@@ -164,7 +166,8 @@ public class TimeWindowsFragment extends Fragment {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(SAVESETIINGS, jsonSave);
         editor.commit();
-        sendDataToServer(jsonSave);
+        sendDataToServer(settingsModel);
+
     }
 
     void addTimeWindow(){
@@ -224,7 +227,9 @@ public class TimeWindowsFragment extends Fragment {
                     datePickerDialog = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
                         @Override
                         public void onDateSet(DatePicker view, int mYear, int mMonth, int dayOfMonth) {
-                            editTextDate.setText(dayOfMonth + "." + (mMonth + 1) + "." + mYear);
+                            String date= formatDate(dayOfMonth,mMonth+1,mYear);
+                            //editTextDate.setText(dayOfMonth + "." + (mMonth + 1) + "." + mYear);
+                            editTextDate.setText(date);
                             closeKeyboard();
                         }
                     }, year, month, day);
@@ -293,7 +298,7 @@ public class TimeWindowsFragment extends Fragment {
                     timePickerDialog = new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener() {
                         @Override
                         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                            String timeText= formatTime(0,0);
+                            String timeText= formatTime(hourOfDay,minute);
                             editTextBis.setText(timeText);
                         }
 
@@ -372,7 +377,29 @@ public class TimeWindowsFragment extends Fragment {
         return time;
     }
 
-    private void sendDataToServer(String data){
-        ((MainActivity)getActivity()).pub(data);
+    private String formatDate(int day, int month, int year) {
+        String date = "";
+
+        if (day < 10){
+            date+="0"+day+".";
+        }else{
+            date+=day+".";
+        }
+
+        if (month < 10){
+            date+="0"+month+".";
+        }else{
+            date+=month+".";
+        }
+
+        date+=year;
+
+        return date;
     }
+
+    private void sendDataToServer(SettingsModel s){
+         String data =SettingsModel.createDatesStringforMqtt(s);
+        ((MainActivity)getActivity()).pubTo(data, publishTopic);
+    }
+
 }
