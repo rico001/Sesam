@@ -11,8 +11,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 
-
-
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -21,14 +19,11 @@ public class OpenDoorFragment extends Fragment {
     private ImageView imageView;
     private Button buttonOpenDoor;
 
-    public static final String SHARED_PREFS = "sharedPrefs" ;
-    public static final String SAVESETIINGS="savesettings";
-    public static final String OPENDOORTOPIC="Sesam/openDoor";
+    private static final String OPENDOORTOPIC="Sesam/openDoor";
 
     public OpenDoorFragment() {
-        // Required empty public constructor
-    }
 
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -40,14 +35,13 @@ public class OpenDoorFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-
         imageView= (ImageView) getView().findViewById(R.id.imageViewBsp);
         buttonOpenDoor= (Button) getView().findViewById(R.id.buttonOpenDoor);
         buttonOpenDoor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startAnim(5);
-                sendDataToServer("1");
+                ((MainActivity)getActivity()).sendDataToServer(OPENDOORTOPIC,"1");
             }
         });
 
@@ -58,9 +52,7 @@ public class OpenDoorFragment extends Fragment {
         imageView.setVisibility(imageView.getVisibility()+10);
     }
 
-    private void sendDataToServer(String data){
-        ((MainActivity)getActivity()).pubTo(data,OPENDOORTOPIC);
-    }
+
 
 
 

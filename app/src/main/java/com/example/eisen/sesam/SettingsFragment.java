@@ -1,43 +1,43 @@
 package com.example.eisen.sesam;
 
-
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 
+import java.util.Calendar;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class SettingsFragment extends Fragment {
 
-    SettingsModel settingsModel=new SettingsModel();
-
     //________________Buttons______________________
     Button buttonSaveSettings;
+
     //________________Seekbars_____________________
     SeekBar seekBarDuration;
     SeekBar seekBarHowMany;
+
     //________________TextViews____________________
     TextView textViewTime;
     TextView textViewDuration;
-    //________________SAVEDATA_______________
+    //_______________EditTexts_____________________
+    private EditText editTextServerIP;
+
     public static final String SHARED_PREFS = "sharedPrefs" ;
-    public static final String SAVESETIINGS="savesettings";
-    final String publishTopic = "Sesam/Settings/behavior";          //for ESP
+
 
     public SettingsFragment() {
 
@@ -53,26 +53,30 @@ public class SettingsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        loadData();
         initButtons();
         initSeekBars();
         initTextViews();
+        initEditTexts();
     }
 
-    private void loadData(){
+    private void initEditTexts() {
+        editTextServerIP = (EditText) getView().findViewById(R.id.editTextServerIP);
+        editTextServerIP.setText(((MainActivity)getActivity()).loadIP());
+        editTextServerIP.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) { }
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(editTextServerIP.getText().toString().equals("")){
+                    buttonSaveSettings.setEnabled(false);
+                }else{
+                    buttonSaveSettings.setEnabled(true);
+                }
+            }
+        });
 
-        SharedPreferences sharedPreferences = this.getActivity().getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
-        if(sharedPreferences.contains(SAVESETIINGS)) {
-
-            String jsonLoad= sharedPreferences.getString(SAVESETIINGS, "");
-            Log.d("test", jsonLoad);
-            Gson gson = new Gson();
-            settingsModel = gson.fromJson(jsonLoad, SettingsModel.class);
-
-        }else{
-            Log.d("test", "SAVESETTINGS existiert noch nicht");
-            Log.d("test", settingsModel.getListDataHeader().size()+"");
-        }
     }
 
     void initButtons(){
@@ -81,12 +85,17 @@ public class SettingsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 v.setEnabled(false);
-                saveData();
+                updateModel();
+                ((MainActivity)getActivity()).saveIP(editTextServerIP.getText().toString());
+                ((MainActivity)getActivity()).saveData();
+                ((MainActivity)getActivity()).sendDataToServer();
             }
         });
     }
 
     void initSeekBars(){
+        SettingsModel settingsModel=((MainActivity)getActivity()).getSettingsModel();
+
         //seekBar für Öffnungsdauer einrichten
         seekBarDuration = (SeekBar) getView().findViewById(R.id.seekBarDuration2);
         seekBarDuration.setProgress(settingsModel.getDuration());
@@ -131,23 +140,13 @@ public class SettingsFragment extends Fragment {
         textViewTime.setText(seekBarHowMany.getProgress()+" Mal");
     }
 
-    private void saveData(){
+    private void updateModel(){
+        SettingsModel settingsModel=((MainActivity)getActivity()).getSettingsModel();
         settingsModel.setDuration(seekBarDuration.getProgress());
         settingsModel.setTimes(seekBarHowMany.getProgress());
-        Gson gson = new Gson();
-        String jsonSave = gson.toJson(settingsModel);
-        SharedPreferences sharedPreferences = this.getActivity().getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(SAVESETIINGS, jsonSave);
-        editor.commit();
-        sendDataToServer(settingsModel);
     }
 
-    private void sendDataToServer(SettingsModel s){
-         String data = "";
-         data = SettingsModel.createBehaviorStringforMqtt(s);
-        ((MainActivity)getActivity()).pubTo(data,publishTopic);
-    }
+
 
 
 

@@ -37,40 +37,27 @@ import java.util.List;
  */
 public class TimeWindowsFragment extends Fragment {
 
-    SettingsModel settingsModel;
-
-    ExpandableListView expListView;
-    ExpandableListAdapter listAdapterGeneralSettings;
-    List<String> listDataHeader;
-    HashMap<String, List<String>> listDataChild;
-
-    //________________SAVEDATA_______________
-    public static final String SHARED_PREFS = "sharedPrefs" ;
-    public static final String SAVESETIINGS="savesettings";
-
+    private ExpandableListView expListView;
+    private ExpandableListAdapter listAdapter;
+    private List<String> listDataHeader;
+    private HashMap<String, List<String>> listDataChild;
     //_______________Buttons_________________
-    Button buttonSaveTimeWindow;
-    Button buttonDeleteAllWindows;
+    private Button buttonSaveTimeWindow;
+    private Button buttonDeleteAllWindows;
     //_______________EditTexts_______________
-    EditText editTextTitel;
-    EditText editTextVon;
-    EditText editTextBis;
-    TextView  editTextDate;
+    private EditText editTextTitel;
+    private EditText editTextVon;
+    private EditText editTextBis;
+    private TextView  editTextDate;
     //__________TimePicker___________________
-    DatePickerDialog datePickerDialog;
-    TimePickerDialog timePickerDialog;
+    private DatePickerDialog datePickerDialog;
+    private TimePickerDialog timePickerDialog;
 
     boolean editTextIsTouched=false;
-
-    final String publishTopic = "Sesam/Settings/date";          //for ESP
-
-
-
 
     public TimeWindowsFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -83,48 +70,17 @@ public class TimeWindowsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        settingsModel=new SettingsModel();
-        listDataHeader = new ArrayList<>();
-        listDataChild = new HashMap<>();
-        loadData();
+        listDataHeader = ((MainActivity)getActivity()).getSettingsModel().getListDataHeader();
+        listDataChild = ((MainActivity)getActivity()).getSettingsModel().getListDataChild();
         initTimeWindowlist();
         initEditTexts();
         initButtons();
     }
 
-    void initTimeWindowlist(){
+    private void initTimeWindowlist(){
         expListView = (ExpandableListView) getView().findViewById(R.id.expListViewTimeWidows2);
-        initFillWindowList();
-        listAdapterGeneralSettings = new ExpandableListAdapter(getContext(), listDataHeader, listDataChild);
-        expListView.setAdapter(listAdapterGeneralSettings);
-    }
-
-    private void initFillWindowList(){
-        if(settingsModel.getListDataHeader().size()>0){
-            for(int i=0; i<=settingsModel.getListDataHeader().size()-1;i++){
-                listDataHeader.add(settingsModel.getListDataHeader().get(i));
-                List<String> data = new ArrayList<String>();
-                data.add(settingsModel.getListDataChild().get(settingsModel.getListDataHeader().get(i)).get(0));
-                data.add(settingsModel.getListDataChild().get(settingsModel.getListDataHeader().get(i)).get(1));
-                data.add(settingsModel.getListDataChild().get(settingsModel.getListDataHeader().get(i)).get(2));
-                listDataChild.put(settingsModel.getListDataHeader().get(i), data);
-            }
-        }
-    }
-
-    private void loadData(){
-
-        SharedPreferences sharedPreferences = this.getActivity().getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
-        if(sharedPreferences.contains(SAVESETIINGS)) {
-
-            String jsonLoad= sharedPreferences.getString(SAVESETIINGS, "");
-            Log.d("test", jsonLoad);
-            Gson gson = new Gson();
-            settingsModel = gson.fromJson(jsonLoad, SettingsModel.class);
-        }else{
-            Log.d("test", "SAVESETTINGS existiert noch nicht");
-            Log.d("test", settingsModel.getListDataHeader().size()+"");
-        }
+        listAdapter = new ExpandableListAdapter(getContext(), listDataHeader, listDataChild);
+        expListView.setAdapter(listAdapter);
     }
 
     void initButtons(){
@@ -135,19 +91,23 @@ public class TimeWindowsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 addTimeWindow();
-                saveData();
+                updateModel();
+                ((MainActivity)getActivity()).saveData();
+                ((MainActivity)getActivity()).sendDataToServer();
             }
         });
 
         buttonDeleteAllWindows = (Button) getView().findViewById(R.id.buttonDeleteAllWindows2);
-        if(settingsModel.getListDataHeader().size()>0) {
+        if(((MainActivity)getActivity()).getSettingsModel().getListDataHeader().size()>0) {
             buttonDeleteAllWindows.setEnabled(true);
         }
         buttonDeleteAllWindows.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 deleleteWindowList();
-                saveData();
+                updateModel();
+                ((MainActivity)getActivity()).saveData();
+                ((MainActivity)getActivity()).sendDataToServer();
             }
         });
 
@@ -156,21 +116,13 @@ public class TimeWindowsFragment extends Fragment {
 
     }
 
-    private void saveData(){
+    private void updateModel(){
+        SettingsModel settingsModel=((MainActivity)getActivity()).getSettingsModel();
         settingsModel.setListDataChild(listDataChild);
         settingsModel.setListDataHeader(listDataHeader);
-        Gson gson = new Gson();
-        String jsonSave = gson.toJson(settingsModel);
-
-        SharedPreferences sharedPreferences = this.getActivity().getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(SAVESETIINGS, jsonSave);
-        editor.commit();
-        sendDataToServer(settingsModel);
-
     }
 
-    void addTimeWindow(){
+    private void addTimeWindow(){
         if(validateInputFields()){
             listDataHeader.add(editTextTitel.getText().toString());
             List<String> data = new ArrayList<String>();
@@ -180,8 +132,8 @@ public class TimeWindowsFragment extends Fragment {
 
             listDataChild.put(listDataHeader.get(listDataHeader.size()-1), data);
 
-            listAdapterGeneralSettings = new ExpandableListAdapter(getContext(), listDataHeader, listDataChild);
-            expListView.setAdapter(listAdapterGeneralSettings);
+            listAdapter = new ExpandableListAdapter(getContext(), listDataHeader, listDataChild);
+            expListView.setAdapter(listAdapter);
 
             setEmptyEditTexts();
             buttonSaveTimeWindow.setEnabled(false);
@@ -191,7 +143,7 @@ public class TimeWindowsFragment extends Fragment {
         }
     }
 
-    void initEditTexts(){
+    private void initEditTexts(){
         //init EditTexts
         editTextTitel = (EditText) getView().findViewById(R.id.editTextTitel2);
 
@@ -318,10 +270,11 @@ public class TimeWindowsFragment extends Fragment {
         });
     }
 
-    void deleleteWindowList(){
+
+    private void deleleteWindowList(){
         listDataHeader.clear();
         listDataChild.clear();
-        expListView.setAdapter(listAdapterGeneralSettings);
+        expListView.setAdapter(listAdapter);
         buttonDeleteAllWindows.setEnabled(false);
     }
 
@@ -332,7 +285,7 @@ public class TimeWindowsFragment extends Fragment {
         editTextTitel.setText("");
     }
 
-    public boolean validateInputFields(){
+    private boolean validateInputFields(){
         boolean correct =true;
 
         if(editTextDate.getText().toString().equals("")){
@@ -397,9 +350,5 @@ public class TimeWindowsFragment extends Fragment {
         return date;
     }
 
-    private void sendDataToServer(SettingsModel s){
-         String data =SettingsModel.createDatesStringforMqtt(s);
-        ((MainActivity)getActivity()).pubTo(data, publishTopic);
-    }
 
 }

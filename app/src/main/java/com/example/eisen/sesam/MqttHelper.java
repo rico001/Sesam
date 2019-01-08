@@ -1,11 +1,9 @@
 package com.example.eisen.sesam;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
-import org.eclipse.paho.android.service.MqttTraceHandler;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
@@ -13,31 +11,35 @@ import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
-import android.databinding.*;
 
 import java.io.UnsupportedEncodingException;
 
 
-public class MqttHelper extends BaseObservable{
+public class MqttHelper{
 
     private MqttAndroidClient mqttAndroidClient;
 
-    final String serverIP = "tcp://192.168.178.80:1883";        //raspi bzw mqttServer
-    final String clientId = "SesamApp";
-    final String subscriptionTopic = "Sesam/Esp/state";         //for Button SofortÖffnen
+    private final String clientId = "SesamApp";
+    private final String subscriptionTopic = "Sesam/Esp/state";         //for Button SofortÖffnen
+    private String serverIp;
+    private Context context;
 
 
-    public MqttHelper(final Context context){
-        mqttAndroidClient = new MqttAndroidClient(context, serverIP, clientId);
+
+
+    public MqttHelper(final Context context, String ip){
+        this.context=context;
+        serverIp="tcp://"+ip+":1883";
+        mqttAndroidClient = new MqttAndroidClient(context, serverIp, clientId);
         mqttAndroidClient.setCallback(new MqttCallback() {
             @Override
             public void connectionLost(Throwable cause) {
-                Log.d("Mqtt", "Verbindung verloren" + serverIP);
+                Log.d("Mqtt", "Verbindung verloren");
             }
 
             @Override
             public void messageArrived(String topic, MqttMessage message) throws Exception {
-                Log.d("Mqtt", "Message arrived:  " +message.toString()+ serverIP);
+                Log.d("Mqtt", "Message arrived:  " +message.toString());
             }
 
             @Override
@@ -47,36 +49,39 @@ public class MqttHelper extends BaseObservable{
                 }catch(Exception e){}
             }
         });
-
         connect();
     }
 
     private void connect(){
         try {
 
-            mqttAndroidClient.connect(null, new IMqttActionListener() {
+            MqttConnectOptions options = new MqttConnectOptions();
+            options.setMqttVersion(MqttConnectOptions.MQTT_VERSION_3_1);
+            options.setConnectionTimeout(10000);
+
+            mqttAndroidClient.connect(options,context, new IMqttActionListener() {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
-                    Log.d("Mqtt", "Connect erfolgreich" + serverIP);
+                    Log.d("Mqtt", "Connect erfolgreich");
                     subscribeToTopic();
                 }
 
                 @Override
                 public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-                    Log.d("Mqtt", "Connect fehlgeschlagen" + serverIP + exception.toString());
+                    Log.d("Mqtt", "Connect fehlgeschlagen"+ exception.toString());
                 }
             });
 
 
         } catch (MqttException ex){
-            ex.printStackTrace();
+            Log.d("Mqtt", "HALLOO");
         }
 
     }
 
     private void subscribeToTopic() {
         try {
-            mqttAndroidClient.subscribe(subscriptionTopic, 0, null, new IMqttActionListener() {
+            mqttAndroidClient.subscribe(subscriptionTopic, 0, context, new IMqttActionListener() {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
                     Log.w("Mqtt","Subscribed!");
@@ -93,8 +98,7 @@ public class MqttHelper extends BaseObservable{
         }
     }
 
-    public void publishMessageTo(String msg, int qos, String anyTopic)
-            throws MqttException, UnsupportedEncodingException {
+    public void publishMessageTo(String msg, int qos, String anyTopic) throws MqttException, UnsupportedEncodingException {
         byte[] encodedPayload = new byte[0];
         encodedPayload = msg.getBytes("UTF-8");
         MqttMessage message = new MqttMessage(encodedPayload);
@@ -103,6 +107,9 @@ public class MqttHelper extends BaseObservable{
         mqttAndroidClient.publish(anyTopic, message);
     }
 
+    public void setCallback(MqttCallback callback){
+        mqttAndroidClient.setCallback(callback);
+    }
 
 
 }
