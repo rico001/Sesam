@@ -41,7 +41,10 @@ public class OpenDoorFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 startAnim(5);
-                ((MainActivity)getActivity()).sendDataToServer(OPENDOORTOPIC,"1");
+                SettingsModel settingsModel=((MainActivity)getActivity()).getSettingsModel();
+                String data=settingsModel.getTimes()+"";
+                data+=settingsModel.getDuration();
+                ((MainActivity)getActivity()).sendDataToServer(OPENDOORTOPIC,data);
             }
         });
 

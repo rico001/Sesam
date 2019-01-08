@@ -218,7 +218,7 @@ public class TimeWindowsFragment extends Fragment {
                             editTextVon.setText(timeText);
                         }
 
-                    },hour,min,android.text.format.DateFormat.is24HourFormat(getActivity()));
+                    },hour+11,min,true);
 
                     timePickerDialog.setOnShowListener(new DialogInterface.OnShowListener() {
                         @Override
@@ -254,7 +254,7 @@ public class TimeWindowsFragment extends Fragment {
                             editTextBis.setText(timeText);
                         }
 
-                    },00,00,android.text.format.DateFormat.is24HourFormat(getActivity()));
+                    },23,59,true);
 
                     timePickerDialog.setOnShowListener(new DialogInterface.OnShowListener() {
                         @Override

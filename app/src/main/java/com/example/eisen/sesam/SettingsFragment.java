@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,10 +14,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
-
-import com.google.gson.Gson;
-
-import java.util.Calendar;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -34,7 +31,9 @@ public class SettingsFragment extends Fragment {
     TextView textViewTime;
     TextView textViewDuration;
     //_______________EditTexts_____________________
+
     private EditText editTextServerIP;
+    private boolean ipChanged= false;
 
     public static final String SHARED_PREFS = "sharedPrefs" ;
 
@@ -73,6 +72,7 @@ public class SettingsFragment extends Fragment {
                     buttonSaveSettings.setEnabled(false);
                 }else{
                     buttonSaveSettings.setEnabled(true);
+                    ipChanged=true;
                 }
             }
         });
@@ -90,7 +90,12 @@ public class SettingsFragment extends Fragment {
                 ((MainActivity)getActivity()).saveIP(editTextServerIP.getText().toString());
                 ((MainActivity)getActivity()).saveData();
                 ((MainActivity)getActivity()).sendDataToServer();
-                ((MainActivity)getActivity()).initNewConnection();
+
+                if(ipChanged==true) {
+                    ((MainActivity) getActivity()).initNewConnection();
+                    Log.d("IP","ip geändert und reconnect init");
+                    ipChanged=false;
+                }
             }
         });
     }
