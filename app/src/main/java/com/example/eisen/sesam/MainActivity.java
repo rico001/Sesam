@@ -158,6 +158,10 @@ public class MainActivity extends AppCompatActivity {
         return mqttHelper;
     }
 
+    public void initNewConnection(){
+        mqttHelper = new MqttHelper(getApplicationContext(),loadIP());
+    }
+
 
 
 }

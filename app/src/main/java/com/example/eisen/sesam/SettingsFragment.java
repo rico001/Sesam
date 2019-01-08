@@ -81,6 +81,7 @@ public class SettingsFragment extends Fragment {
 
     void initButtons(){
         buttonSaveSettings = (Button) getView().findViewById(R.id.buttonSaveSettings2);
+        buttonSaveSettings.setEnabled(false);
         buttonSaveSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -89,6 +90,7 @@ public class SettingsFragment extends Fragment {
                 ((MainActivity)getActivity()).saveIP(editTextServerIP.getText().toString());
                 ((MainActivity)getActivity()).saveData();
                 ((MainActivity)getActivity()).sendDataToServer();
+                ((MainActivity)getActivity()).initNewConnection();
             }
         });
     }
@@ -145,6 +147,8 @@ public class SettingsFragment extends Fragment {
         settingsModel.setDuration(seekBarDuration.getProgress());
         settingsModel.setTimes(seekBarHowMany.getProgress());
     }
+
+
 
 
 
