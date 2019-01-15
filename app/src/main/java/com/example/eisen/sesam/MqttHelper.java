@@ -98,11 +98,11 @@ public class MqttHelper{
         }
     }
 
-    public void publishMessageTo(String msg, int qos, String anyTopic) throws MqttException, UnsupportedEncodingException {
+    public void publishMessageTo(String msg, int qos, String anyTopic, boolean retainFlag) throws MqttException, UnsupportedEncodingException {
         byte[] encodedPayload = new byte[0];
         encodedPayload = msg.getBytes("UTF-8");
         MqttMessage message = new MqttMessage(encodedPayload);
-        message.setRetained(false); //nachrichten mit true kommen öfter(bis trueMessage überschrieben) an auch nachdem nachricht mit false gesendet wurde!!
+        message.setRetained(retainFlag); //nachrichten mit true kommen öfter(bis trueMessage überschrieben) an auch nachdem nachricht mit false gesendet wurde!!
         message.setQos(qos);
         mqttAndroidClient.publish(anyTopic, message);
     }

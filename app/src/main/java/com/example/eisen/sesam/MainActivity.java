@@ -88,9 +88,9 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.commit();
     }
 
-    public void pubTo(String message, String anyTopic){
+    public void pubTo(String message, String anyTopic, boolean retainFlag){
         try {
-            mqttHelper.publishMessageTo(message,0,anyTopic);
+            mqttHelper.publishMessageTo(message,0,anyTopic, retainFlag);
         }catch(Exception e){
             Log.d("Mqtt", "Publish Fehler von MainActivity");
         }
@@ -146,12 +146,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void sendDataToServer(){
-        String data =settingsModel.createDatesStringforMqtt(settingsModel);
-        pubTo(data, SETTINGSTOPIC);
+        String data =SettingsModel.createDatesStringforMqtt(settingsModel);
+        pubTo(data, SETTINGSTOPIC, false);
     }
 
-    public void sendDataToServer(String anyTopic, String data){
-        pubTo(data, anyTopic);
+    public void sendDataToServer(String anyTopic, String data, boolean retainFlag){
+        pubTo(data, anyTopic, retainFlag);
     }
 
     public MqttHelper getMqttHelper() {

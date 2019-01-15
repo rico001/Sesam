@@ -218,7 +218,7 @@ public class TimeWindowsFragment extends Fragment {
                             editTextVon.setText(timeText);
                         }
 
-                    },hour+11,min,true);
+                    },hour,min,true);
 
                     timePickerDialog.setOnShowListener(new DialogInterface.OnShowListener() {
                         @Override
@@ -269,7 +269,6 @@ public class TimeWindowsFragment extends Fragment {
             }
         });
     }
-
 
     private void deleleteWindowList(){
         listDataHeader.clear();
