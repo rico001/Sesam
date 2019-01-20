@@ -49,6 +49,7 @@ public class MqttHelper{
                 }catch(Exception e){}
             }
         });
+
         connect();
     }
 
@@ -58,6 +59,14 @@ public class MqttHelper{
             MqttConnectOptions options = new MqttConnectOptions();
             options.setMqttVersion(MqttConnectOptions.MQTT_VERSION_3_1);
             options.setConnectionTimeout(10000);
+
+            //Löscht letzten OpenDoorNow-Befehl nach AppSchließung->""/leerer String
+            try {
+                String s="";
+                byte[] encodedPayload = new byte[0];
+                encodedPayload = s.getBytes("UTF-8");
+                options.setWill(OpenDoorFragment.OPENDOORTOPIC,encodedPayload,2,true);
+            } catch (Exception ex) { }
 
             mqttAndroidClient.connect(options,context, new IMqttActionListener() {
                 @Override

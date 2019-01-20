@@ -2,6 +2,9 @@ package com.example.eisen.sesam;
 
 import android.support.annotation.NonNull;
 
+import com.google.gson.Gson;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,18 +16,18 @@ public class SettingsModel {
     private List<String> listDataHeader;
     private HashMap<String, List<String>> listDataChild;
 
-    public SettingsModel(){
+    public SettingsModel() {
         this.duration = 5;
-        this.times=3;
-        this.listDataHeader=new LinkedList<>();
-        this.listDataChild=new HashMap<>();
+        this.times = 3;
+        this.listDataHeader = new LinkedList<>();
+        this.listDataChild = new HashMap<>();
     }
 
-    public SettingsModel(int duration, int times, List<String> listDataHeader, HashMap<String,List<String>> listDataChild ){
+    public SettingsModel(int duration, int times, List<String> listDataHeader, HashMap<String, List<String>> listDataChild) {
         this.duration = duration;
-        this.times=times;
-        this.listDataHeader=listDataHeader;
-        this.listDataChild=listDataChild;
+        this.times = times;
+        this.listDataHeader = listDataHeader;
+        this.listDataChild = listDataChild;
     }
 
     public int getDuration() {
@@ -59,35 +62,104 @@ public class SettingsModel {
         this.listDataChild = listDataChild;
     }
 
-    public static String createDatesStringforMqtt(SettingsModel s){
-        String date="";
-        String time1="";
-        String time2="";
+    public static String createDatesStringforMqtt(SettingsModel s) {
+        String date = "";
+        String time1 = "";
+        String time2 = "";
 
-        if(s.getListDataHeader().size()>0){
-            for(int i=0; i<=s.getListDataHeader().size()-1;i++){
-                date+=s.getListDataChild().get(s.getListDataHeader().get(i)).get(0);
-                time1+=s.getListDataChild().get(s.getListDataHeader().get(i)).get(1);
-                time2+=s.getListDataChild().get(s.getListDataHeader().get(i)).get(2);
+        if (s.getListDataHeader().size() > 0) {
+            for (int i = 0; i <= s.getListDataHeader().size() - 1; i++) {
+                date += s.getListDataChild().get(s.getListDataHeader().get(i)).get(0);
+                time1 += s.getListDataChild().get(s.getListDataHeader().get(i)).get(1);
+                time2 += s.getListDataChild().get(s.getListDataHeader().get(i)).get(2);
 
-                if(i!=s.getListDataHeader().size()-1){
-                    date+="c";
-                    time1+="c";
-                    time2+="c";
+                if (i != s.getListDataHeader().size() - 1) {
+                    date += "c";
+                    time1 += "c";
+                    time2 += "c";
                 }
             }
         }
 
-        String dataReady="";
+        String dataReady = "";
 
-        if(date.length()!=0){
-            dataReady = date + "b" + time1 + "b" + time2 + "a"+s.getTimes()+"a"+s.getDuration();
-        }else{
-            dataReady=s.getTimes()+"a"+s.getDuration();
+        if (date.length() != 0) {
+            dataReady = date + "b" + time1 + "b" + time2 + "a" + s.getTimes() + "a" + s.getDuration();
+        } else {
+            dataReady = s.getTimes() + "a" + s.getDuration();
         }
 
         return dataReady;
     }
 
+    public static String settingsInJSON(SettingsModel s) {
+
+        if (s.getListDataHeader().size() > 0) {
+
+            ArrayList<String> dates = new ArrayList<>();
+            ArrayList<String> timeFrom = new ArrayList<>();
+            ArrayList<String> timeUntil = new ArrayList<>();
+
+            if (s.getListDataHeader().size() > 0) {
+                for (int i = 0; i <= s.getListDataHeader().size() - 1; i++) {
+                    dates.add(s.getListDataChild().get(s.getListDataHeader().get(i)).get(0));    //Datum
+                    timeFrom.add(s.getListDataChild().get(s.getListDataHeader().get(i)).get(1));   //Zeit ab
+                    timeUntil.add(s.getListDataChild().get(s.getListDataHeader().get(i)).get(2));      //Zeit bis
+                }
+            }
+
+
+            Settings se = new Settings(dates, timeFrom, timeUntil);
+
+            Gson gson = new Gson();
+            String settingsDataJSON = gson.toJson(se);
+            return settingsDataJSON;
+        }
+
+
+        return "";
+    }
+
+}
+    //es fehlen noch duration und anzahlKlingeln
+    class Settings {
+
+        private List<String> dates;
+        private List<String> timeFrom;
+        private List<String> timeUntil;
+
+        public Settings(){
+
+        }
+
+        public Settings(ArrayList<String> dates, ArrayList<String> timeFrom, ArrayList<String> timeUntil) {
+            this.dates = dates;
+            this.timeFrom = timeFrom;
+            this.timeUntil = timeUntil;
+        }
+
+        public List<String> getDates() {
+            return dates;
+        }
+
+        public void setDates(List<String> dates) {
+            this.dates = dates;
+        }
+
+        public List<String> getTimeFrom() {
+            return timeFrom;
+        }
+
+        public void setTimeFrom(List<String> timeFrome) {
+            this.timeFrom = timeFrome;
+        }
+
+        public List<String> getTimeUntil() {
+            return timeUntil;
+        }
+
+        public void setTimeUntil(List<String> timeUntil) {
+            this.timeUntil = timeUntil;
+        }
 
 }

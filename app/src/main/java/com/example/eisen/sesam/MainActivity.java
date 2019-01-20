@@ -146,7 +146,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void sendDataToServer(){
-        String data =SettingsModel.createDatesStringforMqtt(settingsModel);
+       // String data =SettingsModel.createDatesStringforMqtt(settingsModel);
+        String data =SettingsModel.settingsInJSON(settingsModel);
         pubTo(data, SETTINGSTOPIC, false);
     }
 

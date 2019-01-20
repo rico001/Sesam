@@ -19,7 +19,7 @@ public class OpenDoorFragment extends Fragment {
     private ImageView imageView;
     private Button buttonOpenDoor;
 
-    private static final String OPENDOORTOPIC="Sesam/openDoorNow";
+    public static final String OPENDOORTOPIC="Sesam/openDoorNow";
 
     public OpenDoorFragment() {
 
@@ -45,22 +45,6 @@ public class OpenDoorFragment extends Fragment {
                 String data=settingsModel.getTimes()+"";
                 data+=settingsModel.getDuration();
                 ((MainActivity)getActivity()).sendDataToServer(OPENDOORTOPIC,data,true);
-
-                Runnable runnable = new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            Thread.sleep(5000);
-                        }catch(InterruptedException e){
-                            ((MainActivity)getActivity()).sendDataToServer(OPENDOORTOPIC,"",true);
-                        }
-                        ((MainActivity)getActivity()).sendDataToServer(OPENDOORTOPIC,"",true);
-                    }
-                };
-
-                new Thread(runnable).start();
-
-
             }
         });
 
