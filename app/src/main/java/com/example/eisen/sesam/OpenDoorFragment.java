@@ -1,6 +1,10 @@
 package com.example.eisen.sesam;
 
+import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -36,14 +40,12 @@ public class OpenDoorFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         imageView= (ImageView) getView().findViewById(R.id.imageView8);
         imageView.setVisibility(View.INVISIBLE);
         buttonOpenDoor= (Button) getView().findViewById(R.id.buttonOpenDoor);
         buttonOpenDoor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 SettingsModel settingsModel=((MainActivity)getActivity()).getSettingsModel();
                 String data=settingsModel.getTimes()+"";
                 data+=settingsModel.getDuration();
@@ -55,6 +57,7 @@ public class OpenDoorFragment extends Fragment {
     }
 
     private void startAnim(int sek){
+
         Log.d("aimation", "animation läuft");
         imageView.setVisibility(View.VISIBLE);
         buttonOpenDoor.setAlpha(0.5f);
@@ -66,6 +69,7 @@ public class OpenDoorFragment extends Fragment {
         fadingPlus.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
+                vibratNow(300);
 
             }
 
@@ -75,18 +79,33 @@ public class OpenDoorFragment extends Fragment {
                     imageView.setVisibility(View.INVISIBLE);
                     buttonOpenDoor.setAlpha(1f);
                     buttonOpenDoor.setClickable(true);
+                    vibratNow(300);
                 }
 
             }
 
             @Override
             public void onAnimationRepeat(Animation animation) {
-
+                vibratNow(300);
             }
         });
 
         imageView.startAnimation(fadingPlus);
+        vibratNow(sek);
 
+    }
+
+    private void vibratNow(int millis){
+
+        Vibrator v = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
+        // Vibrate for n milliseconds
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            //v.vibrate(VibrationEffect.createOneShot(millis+1000, VibrationEffect.DEFAULT_AMPLITUDE));
+            v.vibrate(VibrationEffect.createOneShot(millis, VibrationEffect.DEFAULT_AMPLITUDE));
+        } else {
+            //deprecated in API 26
+            v.vibrate(millis);
+        }
     }
 
 
