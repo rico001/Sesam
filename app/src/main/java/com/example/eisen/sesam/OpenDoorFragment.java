@@ -35,7 +35,7 @@ public class OpenDoorFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        imageView= (ImageView) getView().findViewById(R.id.imageViewBsp);
+        imageView= (ImageView) getView().findViewById(R.id.imageView8);
         buttonOpenDoor= (Button) getView().findViewById(R.id.buttonOpenDoor);
         buttonOpenDoor.setOnClickListener(new View.OnClickListener() {
             @Override
