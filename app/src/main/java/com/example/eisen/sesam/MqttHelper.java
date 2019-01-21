@@ -120,5 +120,9 @@ public class MqttHelper{
         mqttAndroidClient.setCallback(callback);
     }
 
+    public boolean isConnected(){
+       return mqttAndroidClient.isConnected();
+    }
+
 
 }

@@ -163,6 +163,10 @@ public class MainActivity extends AppCompatActivity {
         mqttHelper = new MqttHelper(getApplicationContext(),loadIP());
     }
 
+    public boolean ConectionToServer(){
+       return mqttHelper.isConnected();
+    }
+
 
 
 }

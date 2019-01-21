@@ -95,22 +95,24 @@
             android:paddingBottom="16dip">
 
             <TextView
-                android:layout_width="108dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:width="200dp"
-                android:text="MQTT Broker IP:" />
+                android:text="SESAM. Server IP" />
 
             <EditText
                 android:id="@+id/editTextServerIP"
-                android:layout_width="match_parent"
+                android:layout_width="42dp"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="12dp"
                 android:layout_weight="1"
                 android:clickable="false"
                 android:ems="10"
                 android:fontFamily="sans-serif"
                 android:inputType="textPersonName"
-                android:textColor="?attr/actionModeSplitBackground"
-                android:textSize="18sp" />
+                android:textAlignment="center"
+                android:textColor="@color/colorPrimary"
+                android:textSize="14sp" />
 
         </LinearLayout>
 
