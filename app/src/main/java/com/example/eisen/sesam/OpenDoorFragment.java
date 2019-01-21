@@ -22,7 +22,8 @@ import android.widget.ImageView;
  */
 public class OpenDoorFragment extends Fragment {
 
-    private ImageView imageView;
+    private ImageView imageViewFrameGreen;
+    private ImageView imageViewFrameRed;
     private Button buttonOpenDoor;
 
     public static final String OPENDOORTOPIC="Sesam/openDoorNow";
@@ -40,8 +41,11 @@ public class OpenDoorFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        imageView= (ImageView) getView().findViewById(R.id.imageView8);
-        imageView.setVisibility(View.INVISIBLE);
+        imageViewFrameGreen= (ImageView) getView().findViewById(R.id.doorFrame);
+        //imageViewFrameRed= (ImageView) getView().findViewById(R.id.doorFrame2);
+        //imageViewFrameRed.setVisibility(View.VISIBLE);
+
+        imageViewFrameGreen.setVisibility(View.INVISIBLE);
         buttonOpenDoor= (Button) getView().findViewById(R.id.buttonOpenDoor);
         buttonOpenDoor.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -54,12 +58,14 @@ public class OpenDoorFragment extends Fragment {
             }
         });
 
+
     }
 
     private void startAnim(int sek){
 
         Log.d("aimation", "animation läuft");
-        imageView.setVisibility(View.VISIBLE);
+        //imageViewFrameRed.setVisibility(View.INVISIBLE);
+        imageViewFrameGreen.setVisibility(View.VISIBLE);
         buttonOpenDoor.setAlpha(0.5f);
         buttonOpenDoor.setClickable(false);
         final int repeat=sek;
@@ -76,7 +82,8 @@ public class OpenDoorFragment extends Fragment {
             @Override
             public void onAnimationEnd(Animation animation) {
                 if(animation.getRepeatCount()==repeat){
-                    imageView.setVisibility(View.INVISIBLE);
+                    imageViewFrameGreen.setVisibility(View.INVISIBLE);
+                    //imageViewFrameRed.setVisibility(View.VISIBLE);
                     buttonOpenDoor.setAlpha(1f);
                     buttonOpenDoor.setClickable(true);
                     vibratNow(300);
@@ -90,7 +97,7 @@ public class OpenDoorFragment extends Fragment {
             }
         });
 
-        imageView.startAnimation(fadingPlus);
+        imageViewFrameGreen.startAnimation(fadingPlus);
         vibratNow(sek);
 
     }
