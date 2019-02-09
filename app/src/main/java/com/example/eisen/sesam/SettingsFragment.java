@@ -25,10 +25,8 @@ public class SettingsFragment extends Fragment {
 
     //________________Seekbars_____________________
     SeekBar seekBarDuration;
-    SeekBar seekBarHowMany;
 
     //________________TextViews____________________
-    TextView textViewTime;
     TextView textViewDuration;
     //_______________EditTexts_____________________
 
@@ -118,39 +116,18 @@ public class SettingsFragment extends Fragment {
             public void onStopTrackingTouch(SeekBar seekBar) {}
         });
 
-        //seekBar für Male bis geöffnet wird einrichten
-        seekBarHowMany = (SeekBar) getView().findViewById(R.id.seekBarHowMany2);
-        seekBarHowMany.setProgress(settingsModel.getTimes());
-        seekBarHowMany.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                buttonSaveSettings.setEnabled(true);
-                if(progress!=0){
-                    textViewTime.setText(progress + " Mal");
-                }else{
-                    textViewTime.setText("deaktiviert");
-                }
-            }
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar){}
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar){}
-        });
     }
 
     void initTextViews(){
         //TextViews einrichten
-        textViewTime = (TextView) getView().findViewById(R.id.textViewHowMany2);
         textViewDuration = (TextView) getView().findViewById(R.id.textViewDuration2);
 
         textViewDuration.setText(seekBarDuration.getProgress()+" Sekunden");
-        textViewTime.setText(seekBarHowMany.getProgress()+" Mal");
     }
 
     private void updateModel(){
         SettingsModel settingsModel=((MainActivity)getActivity()).getSettingsModel();
         settingsModel.setDuration(seekBarDuration.getProgress());
-        settingsModel.setTimes(seekBarHowMany.getProgress());
     }
 
 

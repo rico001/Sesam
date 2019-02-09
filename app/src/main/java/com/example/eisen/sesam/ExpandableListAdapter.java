@@ -65,6 +65,10 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             childText = "bis  " + childText + " Uhr";
         }
 
+        if(childPosition==4){
+            childText = "Klingeln: " + childText + " Mal";
+        }
+
         TextView txtListChild = (TextView) convertView
                 .findViewById(R.id.lblListItem);
 

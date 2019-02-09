@@ -51,7 +51,7 @@ public class OpenDoorFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 SettingsModel settingsModel=((MainActivity)getActivity()).getSettingsModel();
-                String data=settingsModel.getTimes()+"";
+                String data="";
                 data+=settingsModel.getDuration();
                 ((MainActivity)getActivity()).sendDataToServer(OPENDOORTOPIC,data,true); //ESp sendet nach öffnen leeren string!!
                 startAnim(settingsModel.getDuration());

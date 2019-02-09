@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -47,7 +48,10 @@ public class TimeWindowsFragment extends Fragment {
     private EditText editTextVon;
     private EditText editTextBis;
     private TextView editTextDate2;
-    private TextView  editTextDate1;
+    private TextView editTextDate1;
+    private TextView textViewTime;
+    //_______________Seekbars_______________
+    SeekBar seekbarKlingeln;
     //__________TimePicker___________________
     private DatePickerDialog datePickerDialog;
     private TimePickerDialog timePickerDialog;
@@ -72,8 +76,29 @@ public class TimeWindowsFragment extends Fragment {
         listDataHeader = ((MainActivity)getActivity()).getSettingsModel().getListDataHeader();
         listDataChild = ((MainActivity)getActivity()).getSettingsModel().getListDataChild();
         initTimeWindowlist();
+        initSeekBars();
         initEditTexts();
         initButtons();
+    }
+
+    void initSeekBars(){
+        //seekBar für Male bis geöffnet wird einrichten
+        seekbarKlingeln = (SeekBar) getView().findViewById(R.id.seekBarKlingeln);
+        seekbarKlingeln.setProgress(3);
+        seekbarKlingeln.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if(progress!=0){
+                    textViewTime.setText((progress)+" Mal");
+                }else{
+                    textViewTime.setText("Zeitfenster deaktiviert");
+                }
+            }
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar){}
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar){}
+        });
     }
 
     private void initTimeWindowlist(){
@@ -129,6 +154,7 @@ public class TimeWindowsFragment extends Fragment {
             data.add(editTextDate2.getText().toString());
             data.add(editTextVon.getText().toString());
             data.add(editTextBis.getText().toString());
+            data.add(seekbarKlingeln.getProgress()+"");
 
             listDataChild.put(listDataHeader.get(listDataHeader.size()-1), data);
 
@@ -144,6 +170,10 @@ public class TimeWindowsFragment extends Fragment {
     }
 
     private void initEditTexts(){
+        //init TextViewKlingeln
+        textViewTime = (TextView) getView().findViewById(R.id.textViewKlingeln);
+        textViewTime.setText(seekbarKlingeln.getProgress()+" Mal");
+
         //init EditTexts
         editTextTitel = (EditText) getView().findViewById(R.id.editTextTitel2);
 
