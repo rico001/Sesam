@@ -55,10 +55,14 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             childText="am "+childText;
         }
         if(childPosition==1){
-            childText="ab  "+childText+" Uhr";
+            childText="bis "+childText;
         }
+
         if(childPosition==2){
-            childText="bis "+childText+" Uhr";
+            childText="von "+childText+" Uhr";
+        }
+        if(childPosition==3){
+            childText = "bis  " + childText + " Uhr";
         }
 
         TextView txtListChild = (TextView) convertView

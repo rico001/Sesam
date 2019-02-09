@@ -96,20 +96,22 @@ public class SettingsModel {
 
         if (s.getListDataHeader().size() > 0) {
 
-            ArrayList<String> dates = new ArrayList<>();
+            ArrayList<String> dateFrom = new ArrayList<>();
+            ArrayList<String> dateUntil = new ArrayList<>();
             ArrayList<String> timeFrom = new ArrayList<>();
             ArrayList<String> timeUntil = new ArrayList<>();
 
             if (s.getListDataHeader().size() > 0) {
                 for (int i = 0; i <= s.getListDataHeader().size() - 1; i++) {
-                    dates.add(s.getListDataChild().get(s.getListDataHeader().get(i)).get(0));    //Datum
-                    timeFrom.add(s.getListDataChild().get(s.getListDataHeader().get(i)).get(1));   //Zeit ab
-                    timeUntil.add(s.getListDataChild().get(s.getListDataHeader().get(i)).get(2));      //Zeit bis
+                    dateFrom.add(s.getListDataChild().get(s.getListDataHeader().get(i)).get(0));
+                    dateUntil.add(s.getListDataChild().get(s.getListDataHeader().get(i)).get(1));    //Datum
+                    timeFrom.add(s.getListDataChild().get(s.getListDataHeader().get(i)).get(2));   //Zeit ab
+                    timeUntil.add(s.getListDataChild().get(s.getListDataHeader().get(i)).get(3));      //Zeit bis
                 }
             }
 
 
-            Settings se = new Settings(dates, timeFrom, timeUntil);
+            Settings se = new Settings(dateFrom, dateUntil, timeFrom, timeUntil);
 
             Gson gson = new Gson();
             String settingsDataJSON = gson.toJson(se);
@@ -124,7 +126,8 @@ public class SettingsModel {
     //es fehlen noch duration und anzahlKlingeln
     class Settings {
 
-        private List<String> dates;
+        private List<String> dateFrom;
+        private List<String> dateUntil;
         private List<String> timeFrom;
         private List<String> timeUntil;
 
@@ -132,18 +135,26 @@ public class SettingsModel {
 
         }
 
-        public Settings(ArrayList<String> dates, ArrayList<String> timeFrom, ArrayList<String> timeUntil) {
-            this.dates = dates;
+        public Settings(ArrayList<String> dateFrom,ArrayList<String> dateUntil, ArrayList<String> timeFrom, ArrayList<String> timeUntil) {
+            this.dateFrom = dateFrom;
+            this.dateUntil = dateUntil;
             this.timeFrom = timeFrom;
             this.timeUntil = timeUntil;
         }
-
-        public List<String> getDates() {
-            return dates;
+        public List<String> getDateFrom() {
+            return dateFrom;
         }
 
-        public void setDates(List<String> dates) {
-            this.dates = dates;
+        public void setDateFrom(List<String> dateFrom) {
+            this.dateFrom = dateFrom;
+        }
+
+        public List<String> getDateUntil() {
+            return dateUntil;
+        }
+
+        public void setDateUntil(List<String> dates) {
+            this.dateUntil = dates;
         }
 
         public List<String> getTimeFrom() {

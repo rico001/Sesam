@@ -5,14 +5,12 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -25,7 +23,7 @@ import android.widget.ExpandableListView;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
-import com.google.gson.Gson;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -48,7 +46,8 @@ public class TimeWindowsFragment extends Fragment {
     private EditText editTextTitel;
     private EditText editTextVon;
     private EditText editTextBis;
-    private TextView  editTextDate;
+    private TextView editTextDate2;
+    private TextView  editTextDate1;
     //__________TimePicker___________________
     private DatePickerDialog datePickerDialog;
     private TimePickerDialog timePickerDialog;
@@ -126,7 +125,8 @@ public class TimeWindowsFragment extends Fragment {
         if(validateInputFields()){
             listDataHeader.add(editTextTitel.getText().toString());
             List<String> data = new ArrayList<String>();
-            data.add(editTextDate.getText().toString());
+            data.add(editTextDate1.getText().toString());
+            data.add(editTextDate2.getText().toString());
             data.add(editTextVon.getText().toString());
             data.add(editTextBis.getText().toString());
 
@@ -163,8 +163,8 @@ public class TimeWindowsFragment extends Fragment {
             }
         });
 
-        editTextDate = (TextView) getView().findViewById(R.id.editTextDate2);
-        editTextDate.setOnTouchListener(new View.OnTouchListener() {
+        editTextDate2 = (TextView) getView().findViewById(R.id.editTextDate2);
+        editTextDate2.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if(editTextIsTouched==false) {
@@ -180,8 +180,44 @@ public class TimeWindowsFragment extends Fragment {
                         @Override
                         public void onDateSet(DatePicker view, int mYear, int mMonth, int dayOfMonth) {
                             String date= formatDate(dayOfMonth,mMonth+1,mYear);
-                            //editTextDate.setText(dayOfMonth + "." + (mMonth + 1) + "." + mYear);
-                            editTextDate.setText(date);
+                            //editTextDate2.setText(dayOfMonth + "." + (mMonth + 1) + "." + mYear);
+                            editTextDate2.setText(date);
+                            closeKeyboard();
+                        }
+                    }, year, month, day);
+
+                    datePickerDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                        @Override
+                        public void onShow(DialogInterface dialog) {
+
+                            editTextIsTouched = false;
+                        }
+                    });
+                    datePickerDialog.show();
+                }
+                return false;
+            }
+        });
+
+        editTextDate1 = (TextView) getView().findViewById(R.id.editTextDate1);
+        editTextDate1.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if(editTextIsTouched==false) {
+                    editTextIsTouched = true;
+
+                    Calendar c;
+                    c = Calendar.getInstance();
+                    int day = c.get(Calendar.DAY_OF_MONTH);
+                    int month = c.get(Calendar.MONTH);
+                    int year = c.get(Calendar.YEAR);
+
+                    datePickerDialog = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
+                        @Override
+                        public void onDateSet(DatePicker view, int mYear, int mMonth, int dayOfMonth) {
+                            String date= formatDate(dayOfMonth,mMonth+1,mYear);
+                            //editTextDate2.setText(dayOfMonth + "." + (mMonth + 1) + "." + mYear);
+                            editTextDate1.setText(date);
                             closeKeyboard();
                         }
                     }, year, month, day);
@@ -280,14 +316,19 @@ public class TimeWindowsFragment extends Fragment {
     private void setEmptyEditTexts(){
         editTextBis.setText("");
         editTextVon.setText("");
-        editTextDate.setText("");
+        editTextDate1.setText("");
+        editTextDate2.setText("");
         editTextTitel.setText("");
     }
 
     private boolean validateInputFields(){
         boolean correct =true;
 
-        if(editTextDate.getText().toString().equals("")){
+        if(editTextDate1.getText().toString().equals("")){
+            return false;
+        }
+
+        if(editTextDate2.getText().toString().equals("")){
             return false;
         }
         if(editTextTitel.getText().toString().equals("")){
