@@ -3,6 +3,7 @@ package com.example.eisen.sesam;
 import android.app.AlarmManager;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Debug;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
@@ -11,6 +12,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+
 import com.google.gson.Gson;
 
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
@@ -26,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
 
     //________________Menu_________________________________________________________
     private BottomNavigationView mMainNav;
+    //private Button buttonNoConnection;
 
     //_____________Fragments_______________________________________________________
     private OpenDoorFragment openDoorFragment = new OpenDoorFragment();
@@ -80,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         loadData();
+//        initButtons();
     }
 
     private void setFragment(Fragment fragment){
@@ -162,6 +168,21 @@ public class MainActivity extends AppCompatActivity {
     public void initNewConnection(){
         mqttHelper = new MqttHelper(getApplicationContext(),loadIP());
     }
+
+    /*
+    void initButtons(){
+        Log.d("noConnectionBtn","Btn einrichten");
+        buttonNoConnection = (Button) findViewById(R.id.buttonNoConnection);
+        if(mqttHelper.isConnected()){
+            buttonNoConnection.setVisibility(View.GONE);
+        }else{
+            buttonNoConnection.setVisibility(View.VISIBLE);
+        }
+        Log.d("noConnectionBtn",mqttHelper.isConnected()+"");
+
+
+    }
+    */
 
     public boolean ConectionToServer(){
        return mqttHelper.isConnected();

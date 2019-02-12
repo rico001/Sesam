@@ -1,6 +1,9 @@
 package com.example.eisen.sesam;
 
-
+/*TODO
+refreshen nachdem NoConnectionBtn geklick wurde
+->noConnectionBtn verschwindet
+ */
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
@@ -43,6 +46,7 @@ public class TimeWindowsFragment extends Fragment {
     //_______________Buttons_________________
     private Button buttonSaveTimeWindow;
     private Button buttonDeleteAllWindows;
+    private Button buttonNoConnection;
     //_______________EditTexts_______________
     private EditText editTextTitel;
     private EditText editTextVon;
@@ -138,6 +142,20 @@ public class TimeWindowsFragment extends Fragment {
         buttonDeleteAllWindows = (Button) getView().findViewById(R.id.buttonDeleteAllWindows2);
 
 
+
+        buttonNoConnection = (Button) getView().findViewById(R.id.buttonNoConnection);
+        if(((MainActivity)getActivity()).getMqttHelper().isConnected()){
+            buttonNoConnection.setVisibility(View.GONE);
+        }else{
+            buttonNoConnection.setVisibility(View.VISIBLE);
+        }
+
+        buttonNoConnection.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity) getActivity()).initNewConnection();
+            }
+        });
     }
 
     private void updateModel(){

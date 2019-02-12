@@ -53,7 +53,7 @@ public class OpenDoorFragment extends Fragment {
                 SettingsModel settingsModel=((MainActivity)getActivity()).getSettingsModel();
                 String data="";
                 data+=settingsModel.getDuration();
-                ((MainActivity)getActivity()).sendDataToServer(OPENDOORTOPIC,data,true); //ESp sendet nach öffnen leeren string!!
+                ((MainActivity)getActivity()).sendDataToServer(OPENDOORTOPIC,data,false); //ESp sendet nach öffnen leeren string!!
                 startAnim(settingsModel.getDuration());
             }
         });
