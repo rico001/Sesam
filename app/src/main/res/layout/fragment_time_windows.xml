@@ -24,7 +24,7 @@
             android:textAllCaps="true"
             android:textColor="@android:color/background_light"
             android:textSize="14sp"
-            android:visibility="visible" />
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/textView7"
