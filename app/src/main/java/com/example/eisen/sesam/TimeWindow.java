@@ -2,6 +2,8 @@ package com.example.eisen.sesam;
 
 public class TimeWindow{
 
+    private String title;
+
     private String FromDate;
     private String tillDate;
 
@@ -21,6 +23,13 @@ public class TimeWindow{
         this.openDuration = openDuration;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
     public String getFromDate() {
         return FromDate;
@@ -69,4 +78,5 @@ public class TimeWindow{
     public void setOpenDuration(int openDuration) {
         this.openDuration = openDuration;
     }
+
 }
