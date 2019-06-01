@@ -51,7 +51,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         settingsModel= new SettingsModel();
         String ip= loadIP();
-        mqttHelper = new MqttHelper(getApplicationContext(),ip);
+        mqttHelper = new MqttHelper(
+                getApplicationContext(),ip);
 
 
         //Menü einrichten

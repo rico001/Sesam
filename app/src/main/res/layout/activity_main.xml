@@ -28,7 +28,7 @@
             android:layout_alignParentBottom="true"
             android:layout_gravity="end"
             android:visibility="visible"
-            app:elevation="9dp"
+            app:elevation="10dp"
             app:itemBackground="@color/colorPrimary"
             app:menu="@menu/nav_items">
 
