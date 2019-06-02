@@ -119,7 +119,6 @@ public class MainActivity extends AppCompatActivity {
 
         }else{
             Log.d("JSON", "SAVESETTINGS existiert noch nicht");
-            Log.d("JSON", settingsModel.getListDataHeader().size()+"");
         }
     }
 
@@ -154,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void sendDataToServer(){
        // String data =SettingsModel.createDatesStringforMqtt(settingsModel);
-        String data =SettingsModel.settingsInJSON(settingsModel);
+        String data =SettingsModel.convertSettingsToJSON(settingsModel);
         pubTo(data, SETTINGSTOPIC, false);
     }
 
@@ -170,25 +169,9 @@ public class MainActivity extends AppCompatActivity {
         mqttHelper = new MqttHelper(getApplicationContext(),loadIP());
     }
 
-    /*
-    void initButtons(){
-        Log.d("noConnectionBtn","Btn einrichten");
-        buttonNoConnection = (Button) findViewById(R.id.buttonNoConnection);
-        if(mqttHelper.isConnected()){
-            buttonNoConnection.setVisibility(View.GONE);
-        }else{
-            buttonNoConnection.setVisibility(View.VISIBLE);
-        }
-        Log.d("noConnectionBtn",mqttHelper.isConnected()+"");
-
-
-    }
-    */
-
     public boolean ConectionToServer(){
        return mqttHelper.isConnected();
     }
-
 
 
 }

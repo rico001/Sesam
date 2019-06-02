@@ -130,4 +130,5 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         _listDataHeader=generateTimeWindowsTitleList(_listDataChild);
         super.notifyDataSetChanged();
     }
+
 }
