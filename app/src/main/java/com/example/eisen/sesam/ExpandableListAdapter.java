@@ -119,10 +119,15 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         return true;
     }
 
-    public static ArrayList<String> generateTimeWindowsTitleList(List<TimeWindow> timeWindows){
+    private ArrayList<String> generateTimeWindowsTitleList(List<TimeWindow> timeWindows){
         final ArrayList<String> titleList = new ArrayList<>();
         timeWindows.stream().forEach(timeWindow -> titleList.add(timeWindow.getTitle()));
         return titleList;
     }
 
+    @Override
+    public void notifyDataSetChanged() {
+        _listDataHeader=generateTimeWindowsTitleList(_listDataChild);
+        super.notifyDataSetChanged();
+    }
 }

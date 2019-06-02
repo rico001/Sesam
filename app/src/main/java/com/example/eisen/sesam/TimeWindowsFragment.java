@@ -180,9 +180,7 @@ public class TimeWindowsFragment extends Fragment {
             timeWindow.setRingNumber(seekbarKlingeln.getProgress());
 
             listContent.add(timeWindow);
-
-            listAdapter = new ExpandableListAdapter(getContext(), listContent);
-            expListView.setAdapter(listAdapter);
+            listAdapter.notifyDataSetChanged();
 
             setEmptyEditTexts();
             buttonSaveTimeWindow.setEnabled(false);
@@ -361,7 +359,7 @@ public class TimeWindowsFragment extends Fragment {
 
     private void deleleteWindowList(){
         listContent.clear();
-        expListView.setAdapter(listAdapter);
+        listAdapter.notifyDataSetChanged();
         buttonDeleteAllWindows.setEnabled(false);
     }
 
