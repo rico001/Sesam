@@ -11,11 +11,17 @@ public class TimeWindowWrapper{
         timeWindows = new ArrayList<TimeWindow>();
     }
 
-    public TimeWindowWrapper(List<TimeWindow> timeWindows) {
+    public TimeWindowWrapper(ArrayList<TimeWindow> timeWindows) {
         this.timeWindows = timeWindows;
     }
 
     public List<TimeWindow> getTimeWindows() {
         return timeWindows;
+    }
+
+    public static ArrayList<String> generateTimeWindowsTitleList(List<TimeWindow> timeWindows){
+        final ArrayList<String> titleList = new ArrayList<>();
+        timeWindows.stream().forEach(timeWindow -> titleList.add(timeWindow.getTitle()));
+        return titleList;
     }
 }

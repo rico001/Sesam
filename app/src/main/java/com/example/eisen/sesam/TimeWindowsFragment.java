@@ -41,8 +41,7 @@ public class TimeWindowsFragment extends Fragment {
 
     private ExpandableListView expListView;
     private ExpandableListAdapter listAdapter;
-    private List<String> listDataHeader;
-    private HashMap<String, List<String>> listDataChild;
+    private List<TimeWindow> listContent;
     //_______________Buttons_________________
     private Button buttonSaveTimeWindow;
     private Button buttonDeleteAllWindows;
@@ -77,8 +76,10 @@ public class TimeWindowsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        listDataHeader = ((MainActivity)getActivity()).getSettingsModel().getListDataHeader();
-        listDataChild = ((MainActivity)getActivity()).getSettingsModel().getListDataChild();
+
+        TimeWindowWrapper timeWindowWrapper = new TimeWindowWrapper();
+        listContent = timeWindowWrapper.getTimeWindows();
+
         initTimeWindowlist();
         initSeekBars();
         initEditTexts();
@@ -107,7 +108,7 @@ public class TimeWindowsFragment extends Fragment {
 
     private void initTimeWindowlist(){
         expListView = (ExpandableListView) getView().findViewById(R.id.expListViewTimeWidows2);
-        listAdapter = new ExpandableListAdapter(getContext(), listDataHeader, listDataChild);
+        listAdapter = new ExpandableListAdapter(getContext(), listContent);
         expListView.setAdapter(listAdapter);
     }
 
@@ -119,7 +120,7 @@ public class TimeWindowsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 addTimeWindow();
-                updateModel();
+                //updateModel();
                 ((MainActivity)getActivity()).saveData();
                 ((MainActivity)getActivity()).sendDataToServer();
             }
@@ -133,7 +134,7 @@ public class TimeWindowsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 deleleteWindowList();
-                updateModel();
+                //updateModel();
                 ((MainActivity)getActivity()).saveData();
                 ((MainActivity)getActivity()).sendDataToServer();
             }
@@ -158,25 +159,29 @@ public class TimeWindowsFragment extends Fragment {
         });
     }
 
-    private void updateModel(){
+/*    private void updateModel(){
         SettingsModel settingsModel=((MainActivity)getActivity()).getSettingsModel();
         settingsModel.setListDataChild(listDataChild);
         settingsModel.setListDataHeader(listDataHeader);
     }
+    */
 
     private void addTimeWindow(){
         if(validateInputFields()){
-            listDataHeader.add(editTextTitel.getText().toString());
+
             List<String> data = new ArrayList<String>();
-            data.add(editTextDate1.getText().toString());
-            data.add(editTextDate2.getText().toString());
-            data.add(editTextVon.getText().toString());
-            data.add(editTextBis.getText().toString());
-            data.add(seekbarKlingeln.getProgress()+"");
+            TimeWindow timeWindow = new TimeWindow();
+            timeWindow.setTitle(editTextTitel.getText().toString());
+            timeWindow.setFromDate(editTextDate1.getText().toString());
+            timeWindow.setTillDate(editTextDate2.getText().toString());
+            timeWindow.setFromTime(editTextVon.getText().toString());
+            timeWindow.setTillTime(editTextBis.getText().toString());
+            timeWindow.setOpenDuration(1);
+            timeWindow.setRingNumber(seekbarKlingeln.getProgress());
 
-            listDataChild.put(listDataHeader.get(listDataHeader.size()-1), data);
+            listContent.add(timeWindow);
 
-            listAdapter = new ExpandableListAdapter(getContext(), listDataHeader, listDataChild);
+            listAdapter = new ExpandableListAdapter(getContext(), listContent);
             expListView.setAdapter(listAdapter);
 
             setEmptyEditTexts();
@@ -355,8 +360,7 @@ public class TimeWindowsFragment extends Fragment {
     }
 
     private void deleleteWindowList(){
-        listDataHeader.clear();
-        listDataChild.clear();
+        listContent.clear();
         expListView.setAdapter(listAdapter);
         buttonDeleteAllWindows.setEnabled(false);
     }

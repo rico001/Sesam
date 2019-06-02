@@ -13,6 +13,7 @@ public class TimeWindow{
     private int ringNumber;
     private int openDuration;
 
+    public TimeWindow(){}
 
     public TimeWindow(String fromDate, String tillDate, String fromTime, String tillTime, int ringNumber, int openDuration) {
         FromDate = fromDate;
