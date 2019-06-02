@@ -41,8 +41,7 @@ public class TimeWindowsFragment extends Fragment {
 
     private ExpandableListView expListView;
     private ExpandableListAdapter listAdapter;
-    private List<TimeWindow> listContent;
-    private TimeWindowWrapper timeWindowWrapper;
+    private List<TimeWindow> timeWindows;
     //_______________Buttons_________________
     private Button buttonSaveTimeWindow;
     private Button buttonDeleteAllWindows;
@@ -78,8 +77,7 @@ public class TimeWindowsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        timeWindowWrapper = ((MainActivity)getActivity()).getSettingsModel().getTimeWindowWrapper();
-        listContent = timeWindowWrapper.getTimeWindows();
+        timeWindows = ((MainActivity)getActivity()).getSettingsModel().getTimeWindows();
 
         initTimeWindowlist();
         initSeekBars();
@@ -109,7 +107,7 @@ public class TimeWindowsFragment extends Fragment {
 
     private void initTimeWindowlist(){
         expListView = (ExpandableListView) getView().findViewById(R.id.expListViewTimeWidows2);
-        listAdapter = new ExpandableListAdapter(getContext(), listContent);
+        listAdapter = new ExpandableListAdapter(getContext(), timeWindows);
         expListView.setAdapter(listAdapter);
     }
 
@@ -121,14 +119,13 @@ public class TimeWindowsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 addTimeWindow();
-                updateModel();
                 ((MainActivity)getActivity()).saveData();
                 ((MainActivity)getActivity()).sendDataToServer();
             }
         });
 
         buttonDeleteAllWindows = (Button) getView().findViewById(R.id.buttonDeleteAllWindows2);
-        if(((MainActivity)getActivity()).getSettingsModel().getTimeWindowWrapper().getTimeWindows().size()!=0) {
+        if(((MainActivity)getActivity()).getSettingsModel().getTimeWindows().size()!=0) {
             buttonDeleteAllWindows.setEnabled(true);
         }
 
@@ -137,7 +134,6 @@ public class TimeWindowsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 deleleteWindowList();
-                //updateModel();
                 ((MainActivity)getActivity()).saveData();
                 ((MainActivity)getActivity()).sendDataToServer();
             }
@@ -162,12 +158,6 @@ public class TimeWindowsFragment extends Fragment {
         });
     }
 
-    private void updateModel(){
-        SettingsModel settingsModel=((MainActivity)getActivity()).getSettingsModel();
-        settingsModel.setTimeWindowWrapper(timeWindowWrapper);
-    }
-
-
     private void addTimeWindow(){
         if(validateInputFields()){
 
@@ -178,10 +168,9 @@ public class TimeWindowsFragment extends Fragment {
             timeWindow.setTillDate(editTextDate2.getText().toString());
             timeWindow.setFromTime(editTextVon.getText().toString());
             timeWindow.setTillTime(editTextBis.getText().toString());
-            timeWindow.setOpenDuration(((MainActivity)getActivity()).getSettingsModel().getDuration());
             timeWindow.setRingNumber(seekbarKlingeln.getProgress());
 
-            listContent.add(timeWindow);
+            timeWindows.add(timeWindow);
             listAdapter.notifyDataSetChanged();
 
             setEmptyEditTexts();
@@ -360,7 +349,7 @@ public class TimeWindowsFragment extends Fragment {
     }
 
     private void deleleteWindowList(){
-        listContent.clear();
+        timeWindows.clear();
         listAdapter.notifyDataSetChanged();
         buttonDeleteAllWindows.setEnabled(false);
     }

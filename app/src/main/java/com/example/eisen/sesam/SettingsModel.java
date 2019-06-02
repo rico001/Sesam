@@ -11,11 +11,11 @@ public class SettingsModel {
 
     private int duration;
 
-    private TimeWindowWrapper timeWindowWrapper;
+    private List<TimeWindow> timeWindows;
 
     public SettingsModel() {
         this.duration = 0;
-        this.timeWindowWrapper = new TimeWindowWrapper();
+        this.timeWindows = new ArrayList<>();
     }
 
     public int getDuration() {
@@ -26,12 +26,12 @@ public class SettingsModel {
         this.duration = duration;
     }
 
-    public TimeWindowWrapper getTimeWindowWrapper() {
-        return timeWindowWrapper;
+    public List<TimeWindow> getTimeWindows() {
+        return timeWindows;
     }
 
-    public void setTimeWindowWrapper(TimeWindowWrapper timeWindowWrapper) {
-        this.timeWindowWrapper = timeWindowWrapper;
+    public void setTimeWindowWrapper(List<TimeWindow> timeWindows) {
+        this.timeWindows = timeWindows;
     }
 
     public static String convertSettingsToJSON(SettingsModel s) {

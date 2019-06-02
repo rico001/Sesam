@@ -11,17 +11,15 @@ public class TimeWindow{
     private String tillTime;
 
     private int ringNumber;
-    private int openDuration;
 
     public TimeWindow(){}
 
-    public TimeWindow(String fromDate, String tillDate, String fromTime, String tillTime, int ringNumber, int openDuration) {
+    public TimeWindow(String fromDate, String tillDate, String fromTime, String tillTime, int ringNumber) {
         FromDate = fromDate;
         this.tillDate = tillDate;
         FromTime = fromTime;
         this.tillTime = tillTime;
         this.ringNumber = ringNumber;
-        this.openDuration = openDuration;
     }
 
     public String getTitle() {
@@ -70,14 +68,6 @@ public class TimeWindow{
 
     public void setRingNumber(int ringNumber) {
         this.ringNumber = ringNumber;
-    }
-
-    public int getOpenDuration() {
-        return openDuration;
-    }
-
-    public void setOpenDuration(int openDuration) {
-        this.openDuration = openDuration;
     }
 
 }

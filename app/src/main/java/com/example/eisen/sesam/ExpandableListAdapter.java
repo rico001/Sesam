@@ -16,11 +16,11 @@ import java.util.List;
 
 public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
-    public final static int TIMEWINDOW_SKILLS=6;
+    public final static int TIMEWINDOW_SKILLS=5;
 
     private Context _context;
-    private List<String> _listDataHeader; //title
-    private List<TimeWindow> _listDataChild;    //timewindows
+    private List<String> _listDataHeader; //title from timeWindows
+    private List<TimeWindow> _listDataChild;    //timeWindows
     private Button btn;
 
     public ExpandableListAdapter(Context context, List<TimeWindow>  content) {
@@ -45,7 +45,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             case 4:
                 return "Klingeln: " + timeWindow.getRingNumber() + " Mal";
             default:
-                return timeWindow.getOpenDuration()+ " Sekunde(n) öffnen";
+                return "?";
         }
     }
 
