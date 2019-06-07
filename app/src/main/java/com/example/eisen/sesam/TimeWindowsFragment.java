@@ -14,6 +14,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -28,6 +29,8 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.example.eisen.sesam.com.example.eisen.interfaces.INotifyFragment;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -37,7 +40,10 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class TimeWindowsFragment extends Fragment {
+public class TimeWindowsFragment extends Fragment implements INotifyFragment{
+
+    //DebugTags
+    public static final String UPDATEFRAGMENT_TAG="updateFragment";
 
     private ExpandableListView expListView;
     private ExpandableListAdapter listAdapter;
@@ -76,9 +82,6 @@ public class TimeWindowsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        timeWindows = ((MainActivity)getActivity()).getSettingsModel().getTimeWindows();
-
         initTimeWindowlist();
         initSeekBars();
         initEditTexts();
@@ -106,6 +109,7 @@ public class TimeWindowsFragment extends Fragment {
     }
 
     private void initTimeWindowlist(){
+        timeWindows = ((MainActivity)getActivity()).getSettingsModel().getTimeWindows();
         expListView = (ExpandableListView) getView().findViewById(R.id.expListViewTimeWidows2);
         listAdapter = new ExpandableListAdapter(getContext(), timeWindows);
         expListView.setAdapter(listAdapter);
@@ -431,5 +435,10 @@ public class TimeWindowsFragment extends Fragment {
         return date;
     }
 
-
+    @Override
+    public void updateFragment() {
+        Log.d("dwdw","ewfwfwef");
+        Log.d(UPDATEFRAGMENT_TAG,UPDATEFRAGMENT_TAG+this.getClass().getName());
+        initTimeWindowlist();
+    }
 }

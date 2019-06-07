@@ -1,5 +1,6 @@
 package com.example.eisen.sesam;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,10 +16,15 @@ import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.example.eisen.sesam.com.example.eisen.interfaces.INotifyFragment;
+
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SettingsFragment extends Fragment {
+public class SettingsFragment extends Fragment implements INotifyFragment{
+
+    //DebugTags
+    public static final String UPDATEFRAGMENT_TAG="updateFragment";
 
     //________________Buttons______________________
     Button buttonSaveSettings;
@@ -34,7 +40,6 @@ public class SettingsFragment extends Fragment {
     private boolean ipChanged= false;
 
     public static final String SHARED_PREFS = "sharedPrefs" ;
-
 
     public SettingsFragment() {
 
@@ -126,15 +131,16 @@ public class SettingsFragment extends Fragment {
         textViewDuration.setText(seekBarDuration.getProgress()+" Sekunden");
     }
 
+
     private void updateModel(){
         SettingsModel settingsModel=((MainActivity)getActivity()).getSettingsModel();
         settingsModel.setDuration(seekBarDuration.getProgress());
     }
 
 
-
-
-
-
-
+    @Override
+    public void updateFragment() {
+        Log.d(UPDATEFRAGMENT_TAG,UPDATEFRAGMENT_TAG+this.getClass().getName());
+        initSeekBars();
+    }
 }

@@ -17,13 +17,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.example.eisen.sesam.com.example.eisen.interfaces.INotifyFragment;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
-public class MainActivity extends AppCompatActivity implements MqttCallback {
+public class MainActivity extends AppCompatActivity implements MqttCallback{
 
     //DebugTags
     public static final String MQTTDEBUG_TAG="mqttdebug";
@@ -56,10 +58,6 @@ public class MainActivity extends AppCompatActivity implements MqttCallback {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        settingsModel= new SettingsModel();
-        String ip= loadIP();
-        mqttHelper = new MqttHelper(getApplicationContext(),ip,this);
-
 
         //Menü einrichten
         mMainNav = (BottomNavigationView) findViewById(R.id.main_nav);
@@ -90,10 +88,19 @@ public class MainActivity extends AppCompatActivity implements MqttCallback {
             }
         });
 
+        settingsModel= new SettingsModel();
+
+        initMqttHelper();
+
 
         loadData();
 //        initButtons();
     }
+    private void initMqttHelper(){
+        String ip= loadIP();
+        mqttHelper = new MqttHelper(getApplicationContext(),ip,this);
+    }
+
 
     private void setFragment(Fragment fragment){
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -126,10 +133,6 @@ public class MainActivity extends AppCompatActivity implements MqttCallback {
         }else{
             Log.d("JSON", "SAVESETTINGS existiert noch nicht");
         }
-    }
-
-    public void getTimeWindowsFRomServer(SettingsModel settingsModel){
-
     }
 
     public String loadIP(){
@@ -190,14 +193,23 @@ public class MainActivity extends AppCompatActivity implements MqttCallback {
         Toast.makeText(this,"Serververbindung verloren",Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * bug!
+     * @param topic
+     * @param message
+     * @throws JsonSyntaxException
+     */
     @Override
-    public void messageArrived(String topic, MqttMessage message) throws Exception {
+    public void messageArrived(String topic, MqttMessage message) throws JsonSyntaxException {
         if(topic.equals(SETTINGSTOPIC)){
             Log.d(MQTTDEBUG_TAG,"messageArrived"+message.toString());
             Gson gson = new Gson();
             settingsModel = gson.fromJson(message.toString(), SettingsModel.class);
+            Log.d(SettingsFragment.UPDATEFRAGMENT_TAG,settingsFragment.isAdded()+"");
+            settingsFragment.updateFragment();
+            timeWindowsFragment.updateFragment();
+            Log.d(SettingsFragment.UPDATEFRAGMENT_TAG,"update main2");
         }
-
     }
 
     @Override
@@ -205,4 +217,5 @@ public class MainActivity extends AppCompatActivity implements MqttCallback {
         Log.d(MQTTDEBUG_TAG,"deliveryComplete");
         Toast.makeText(this,"Übermittlung zum Server erfolgreich",Toast.LENGTH_SHORT).show();
     }
+
 }
