@@ -4,6 +4,7 @@ import android.app.AlarmManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Debug;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
@@ -17,9 +18,14 @@ import android.widget.Button;
 
 import com.google.gson.Gson;
 
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.MqttCallback;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MqttCallback {
+
+    //DebugTags
+    public static final String MQTTDEBUG_TAG="mqttdebug";
 
     //_____________________SAVE DATA LOCAL_________________________________________
     public static final String SHARED_PREFS = "sharedPrefs" ;
@@ -51,8 +57,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         settingsModel= new SettingsModel();
         String ip= loadIP();
-        mqttHelper = new MqttHelper(
-                getApplicationContext(),ip);
+        mqttHelper = new MqttHelper(getApplicationContext(),ip,this);
 
 
         //Menü einrichten
@@ -122,6 +127,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void getTimeWindowsFRomServer(SettingsModel settingsModel){
+
+    }
+
     public String loadIP(){
 
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
@@ -154,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
     public void sendDataToServer(){
        // String data =SettingsModel.createDatesStringforMqtt(settingsModel);
         String data =SettingsModel.convertSettingsToJSON(settingsModel);
-        pubTo(data, SETTINGSTOPIC, false);
+        pubTo(data, SETTINGSTOPIC, true);
     }
 
     public void sendDataToServer(String anyTopic, String data, boolean retainFlag){
@@ -166,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void initNewConnection(){
-        mqttHelper = new MqttHelper(getApplicationContext(),loadIP());
+        mqttHelper = new MqttHelper(getApplicationContext(),loadIP(),this);
     }
 
     public boolean ConectionToServer(){
@@ -174,4 +183,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public void connectionLost(Throwable cause) {
+        Log.d(MQTTDEBUG_TAG,"connectionLost");
+    }
+
+    @Override
+    public void messageArrived(String topic, MqttMessage message) throws Exception {
+        Log.d(MQTTDEBUG_TAG,"messageArrived"+message.toString());
+    }
+
+    @Override
+    public void deliveryComplete(IMqttDeliveryToken token) {
+        Log.d(MQTTDEBUG_TAG,"deliveryComplete");
+    }
 }
