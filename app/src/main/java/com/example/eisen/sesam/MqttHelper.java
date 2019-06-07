@@ -39,6 +39,7 @@ public class MqttHelper{
             MqttConnectOptions options = new MqttConnectOptions();
             options.setMqttVersion(MqttConnectOptions.MQTT_VERSION_3_1);
             options.setConnectionTimeout(10000);
+            options.setAutomaticReconnect(true);
 
             mqttAndroidClient.connect(options,context, new IMqttActionListener() {
                 @Override

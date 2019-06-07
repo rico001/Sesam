@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 
@@ -186,15 +187,22 @@ public class MainActivity extends AppCompatActivity implements MqttCallback {
     @Override
     public void connectionLost(Throwable cause) {
         Log.d(MQTTDEBUG_TAG,"connectionLost");
+        Toast.makeText(this,"Serververbindung verloren",Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void messageArrived(String topic, MqttMessage message) throws Exception {
-        Log.d(MQTTDEBUG_TAG,"messageArrived"+message.toString());
+        if(topic.equals(SETTINGSTOPIC)){
+            Log.d(MQTTDEBUG_TAG,"messageArrived"+message.toString());
+            Gson gson = new Gson();
+            settingsModel = gson.fromJson(message.toString(), SettingsModel.class);
+        }
+
     }
 
     @Override
     public void deliveryComplete(IMqttDeliveryToken token) {
         Log.d(MQTTDEBUG_TAG,"deliveryComplete");
+        Toast.makeText(this,"Übermittlung zum Server erfolgreich",Toast.LENGTH_SHORT).show();
     }
 }
