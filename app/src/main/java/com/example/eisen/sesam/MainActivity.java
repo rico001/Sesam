@@ -17,13 +17,16 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.example.eisen.sesam.com.example.eisen.interfaces.INotifyFragment;
+import com.example.eisen.sesam.com.example.eisen.interfaces.IUpdatableFragment;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MqttCallback{
 
@@ -52,6 +55,8 @@ public class MainActivity extends AppCompatActivity implements MqttCallback{
 
     //__________________Model______________________________________________________
     private SettingsModel settingsModel;
+
+    IUpdatableFragment updatableFragments;
 
 
     @Override
@@ -186,6 +191,11 @@ public class MainActivity extends AppCompatActivity implements MqttCallback{
        return mqttHelper.isConnected();
     }
 
+    public void setUpdatableFragment(IUpdatableFragment updatableFragment){
+        Log.d(IUpdatableFragment.TAG,"add"+updatableFragment.getClass().getSimpleName());
+        updatableFragments = updatableFragment;
+    }
+
 
     @Override
     public void connectionLost(Throwable cause) {
@@ -205,10 +215,7 @@ public class MainActivity extends AppCompatActivity implements MqttCallback{
             Log.d(MQTTDEBUG_TAG,"messageArrived"+message.toString());
             Gson gson = new Gson();
             settingsModel = gson.fromJson(message.toString(), SettingsModel.class);
-            Log.d(SettingsFragment.UPDATEFRAGMENT_TAG,settingsFragment.isAdded()+"");
-            settingsFragment.updateFragment();
-            timeWindowsFragment.updateFragment();
-            Log.d(SettingsFragment.UPDATEFRAGMENT_TAG,"update main2");
+            updatableFragments.onMainActivityUpdate();
         }
     }
 

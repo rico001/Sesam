@@ -28,19 +28,17 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
-
-import com.example.eisen.sesam.com.example.eisen.interfaces.INotifyFragment;
+import com.example.eisen.sesam.com.example.eisen.interfaces.IUpdatableFragment;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class TimeWindowsFragment extends Fragment implements INotifyFragment{
+public class TimeWindowsFragment extends Fragment implements IUpdatableFragment {
 
     //DebugTags
     public static final String UPDATEFRAGMENT_TAG="updateFragment";
@@ -82,6 +80,9 @@ public class TimeWindowsFragment extends Fragment implements INotifyFragment{
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        ((MainActivity)getActivity()).setUpdatableFragment(this);
+
         initTimeWindowlist();
         initSeekBars();
         initEditTexts();
@@ -436,9 +437,16 @@ public class TimeWindowsFragment extends Fragment implements INotifyFragment{
     }
 
     @Override
-    public void updateFragment() {
-        Log.d("dwdw","ewfwfwef");
-        Log.d(UPDATEFRAGMENT_TAG,UPDATEFRAGMENT_TAG+this.getClass().getName());
-        initTimeWindowlist();
+    public void onMainActivityUpdate() {
+        Log.d(IUpdatableFragment.TAG,"timewindowsfragment updated");
+        refreshFragment();
     }
+
+    @Override
+    public void refreshFragment() {
+        initTimeWindowlist();
+        buttonNoConnection.setVisibility(View.GONE);
+    }
+
+
 }

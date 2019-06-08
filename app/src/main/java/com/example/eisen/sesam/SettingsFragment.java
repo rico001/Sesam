@@ -15,13 +15,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
-
-import com.example.eisen.sesam.com.example.eisen.interfaces.INotifyFragment;
+import com.example.eisen.sesam.com.example.eisen.interfaces.IUpdatableFragment;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SettingsFragment extends Fragment implements INotifyFragment{
+public class SettingsFragment extends Fragment implements IUpdatableFragment {
 
     //DebugTags
     public static final String UPDATEFRAGMENT_TAG="updateFragment";
@@ -55,10 +54,15 @@ public class SettingsFragment extends Fragment implements INotifyFragment{
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        ((MainActivity)getActivity()).setUpdatableFragment(this);
+
         initButtons();
         initSeekBars();
         initTextViews();
         initEditTexts();
+
+        refreshFragment();
     }
 
     private void initEditTexts() {
@@ -139,8 +143,15 @@ public class SettingsFragment extends Fragment implements INotifyFragment{
 
 
     @Override
-    public void updateFragment() {
-        Log.d(UPDATEFRAGMENT_TAG,UPDATEFRAGMENT_TAG+this.getClass().getName());
-        initSeekBars();
+    public void onMainActivityUpdate() {
+        Log.d(IUpdatableFragment.TAG,"settingfragtment updated");
+        refreshFragment();
     }
+
+    @Override
+    public void refreshFragment() {
+        seekBarDuration.setProgress(((MainActivity)getActivity()).getSettingsModel().getDuration());
+    }
+
+
 }
