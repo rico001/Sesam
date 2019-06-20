@@ -113,7 +113,7 @@ public class SettingsFragment extends Fragment implements IUpdatableFragment {
 
         //seekBar für Öffnungsdauer einrichten
         seekBarDuration = (SeekBar) getView().findViewById(R.id.seekBarDuration2);
-        seekBarDuration.setProgress(settingsModel.getDuration());
+        seekBarDuration.setProgress(3);
         seekBarDuration.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {

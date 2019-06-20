@@ -52,9 +52,11 @@ public class MainActivity extends AppCompatActivity implements MqttCallback{
     //____________mqtt_____________________________________________________________
     private MqttHelper mqttHelper;
     final String SETTINGSTOPIC = "Sesam/Settings/date";
+    final String TOPIC_ACTIVITYFEED = "Sesam/activityfeed";
 
     //__________________Model______________________________________________________
     private SettingsModel settingsModel;
+    private ActivityWrapper activityWrapper;
 
     IUpdatableFragment updatableFragments;
 
@@ -210,12 +212,19 @@ public class MainActivity extends AppCompatActivity implements MqttCallback{
      * @throws JsonSyntaxException
      */
     @Override
-    public void messageArrived(String topic, MqttMessage message) throws JsonSyntaxException {
+    public void messageArrived(String topic, MqttMessage message){
         if(topic.equals(SETTINGSTOPIC)){
             Log.d(MQTTDEBUG_TAG,"messageArrived"+message.toString());
             Gson gson = new Gson();
             settingsModel = gson.fromJson(message.toString(), SettingsModel.class);
             updatableFragments.onMainActivityUpdate();
+        }
+
+        if(topic.equals(TOPIC_ACTIVITYFEED)){
+            Log.d(MQTTDEBUG_TAG,"messageArrived from"+topic+":"+message.toString());
+            Gson gson = new Gson();
+            activityWrapper = gson.fromJson(message.toString(), ActivityWrapper.class);
+            Log.d(MQTTDEBUG_TAG, activityWrapper.getActivityFeedList().toString());
         }
     }
 

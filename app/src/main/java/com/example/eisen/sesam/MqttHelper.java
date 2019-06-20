@@ -23,6 +23,7 @@ public class MqttHelper{
     private final String clientId = "SesamApp";
     private final String subscriptionTopic = "Sesam/Esp/state";         //for Button SofortÖffnen
     private final String Topic_Settings = "Sesam/Settings/date";
+    private final String TOPIC_ACTIVITYFEED = "Sesam/activityfeed";
     private String serverIp;
     private Context context;
 
@@ -65,6 +66,7 @@ public class MqttHelper{
         try {
             mqttAndroidClient.subscribe(subscriptionTopic, 0);
             mqttAndroidClient.subscribe(Topic_Settings, 0);
+            mqttAndroidClient.subscribe(TOPIC_ACTIVITYFEED, 0);
         } catch (MqttException ex) {
             System.err.println("Exceptionst subscribing");
             ex.printStackTrace();
