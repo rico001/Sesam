@@ -96,8 +96,11 @@ public class ActivitiesFragment extends Fragment implements IActivitiesFeed {
             item_attribut= (TextView) textEntryView.findViewById(R.id.textView_activity_batteryStatus);
             item_attribut.setText(activityFeedList.get(index).getBatteryStatus()/2+"V");
             item_attribut= (TextView) textEntryView.findViewById(R.id.textView_activity_openForTitles);
-            String titles=activityFeedList.get(index).getOpenForTitles().toString()
+
+            String titles= activityFeedList.get(index).getOpenForTitles().size()==0? "keine":"";
+            titles+=activityFeedList.get(index).getOpenForTitles().toString()
                     .replaceAll("[\\[\\]]", "");
+
             item_attribut.setText(titles);
             index++;
         }
