@@ -5,6 +5,7 @@ refreshen nachdem NoConnectionBtn geklick wurde
 ->noConnectionBtn verschwindet
  */
 import android.os.Bundle;
+import android.os.Debug;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -22,6 +23,7 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -68,9 +70,13 @@ public class ActivitiesFragment extends Fragment implements IActivitiesFeed {
     @Override
     public void refreshFragment() {
         List<Activity> activityFeedList = activityWrapper.getActivityFeedList();
-        if(activityFeedList==null)return;
 
         initLayouts();
+
+        if(activityFeedList==null || activityFeedList.size()<activityLayouts.size()){//sonst out of BoundsExc
+            Log.d(MainActivity.MQTTDEBUG_TAG,"activityfeedlist<+"+activityLayouts.size()+" oder null");
+            return;
+        }
 
         int index=0;
         for(LinearLayout activityLayout: activityLayouts){
@@ -78,7 +84,6 @@ public class ActivitiesFragment extends Fragment implements IActivitiesFeed {
 
             View textEntryView = getLayoutInflater().inflate(R.layout.activity_item, activityLayout);
             TextView item_attribut;
-
 
             item_attribut= (TextView) textEntryView.findViewById(R.id.textView_activity_time);
             item_attribut.setText(activityFeedList.get(index).getTime()+"Uhr");
@@ -90,6 +95,10 @@ public class ActivitiesFragment extends Fragment implements IActivitiesFeed {
             item_attribut.setText(activityFeedList.get(index).isWasOpened()? "ja":"nein");
             item_attribut= (TextView) textEntryView.findViewById(R.id.textView_activity_batteryStatus);
             item_attribut.setText(activityFeedList.get(index).getBatteryStatus()/2+"V");
+            item_attribut= (TextView) textEntryView.findViewById(R.id.textView_activity_openForTitles);
+            String titles=activityFeedList.get(index).getOpenForTitles().toString()
+                    .replaceAll("[\\[\\]]", "");
+            item_attribut.setText(titles);
             index++;
         }
     }

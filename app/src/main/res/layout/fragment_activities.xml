@@ -8,6 +8,9 @@
 
     <!-- TODO: Update blank fragment layout -->
 
+    <ScrollView android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -47,8 +50,7 @@
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:orientation="vertical"></LinearLayout>
-
-
     </LinearLayout>
+    </ScrollView>
 
 </FrameLayout>
