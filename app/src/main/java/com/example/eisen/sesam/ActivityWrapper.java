@@ -6,6 +6,9 @@ public class ActivityWrapper {
 
     private List<Activity> activityFeedList;
 
+    public ActivityWrapper() {
+        this.activityFeedList = null;
+    }
 
     public ActivityWrapper(List<Activity> activityFeedList) {
         this.activityFeedList = activityFeedList;

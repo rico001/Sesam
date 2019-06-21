@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements MqttCallback{
     private OpenDoorFragment openDoorFragment = new OpenDoorFragment();
     private SettingsFragment settingsFragment = new SettingsFragment();
     private TimeWindowsFragment timeWindowsFragment = new TimeWindowsFragment();
+    private ActivitiesFragment activitiesFragment = new ActivitiesFragment();
 
     //____________mqtt_____________________________________________________________
     private MqttHelper mqttHelper;
@@ -87,6 +88,11 @@ public class MainActivity extends AppCompatActivity implements MqttCallback{
                     case R.id.nav_settings:
                         //mMainNav.setItemBackgroundResource(R.color.colorAccent);
                         setFragment(settingsFragment);
+                        return true;
+
+                    case R.id.nav_activitiesfeed:
+                        //mMainNav.setItemBackgroundResource(R.color.colorAccent);
+                        setFragment(activitiesFragment);
                         return true;
 
                         default:
@@ -221,10 +227,7 @@ public class MainActivity extends AppCompatActivity implements MqttCallback{
         }
 
         if(topic.equals(TOPIC_ACTIVITYFEED)){
-            Log.d(MQTTDEBUG_TAG,"messageArrived from"+topic+":"+message.toString());
-            Gson gson = new Gson();
-            activityWrapper = gson.fromJson(message.toString(), ActivityWrapper.class);
-            Log.d(MQTTDEBUG_TAG, activityWrapper.getActivityFeedList().toString());
+            activitiesFragment.onMainActivityReceiveActivities(message);
         }
     }
 
