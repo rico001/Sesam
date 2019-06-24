@@ -4,6 +4,7 @@ package com.example.eisen.sesam;
 refreshen nachdem NoConnectionBtn geklick wurde
 ->noConnectionBtn verschwindet
  */
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
