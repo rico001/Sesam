@@ -1,8 +1,7 @@
 package com.example.eisen.sesam;
-
 import java.util.List;
 
-public class Activity {
+public class Activity{
 
     private String time;
     private String date;
@@ -73,4 +72,5 @@ public class Activity {
                 "ringNumber:"+this.getRingNumber()+"\n"+
                 "--------------------------"+"\n";
     }
+
 }

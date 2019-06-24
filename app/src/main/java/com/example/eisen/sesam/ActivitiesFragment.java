@@ -71,7 +71,6 @@ public class ActivitiesFragment extends Fragment implements IActivitiesFeed {
         activityLayout.removeAllViews();
 
         List<Activity> activityFeedList = activityWrapper.getActivityFeedList();
-        Collections.reverse(activityFeedList);
 
         for(Activity activity: activityFeedList){
             Log.d(MainActivity.MQTTDEBUG_TAG, activity.toString());
