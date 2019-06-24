@@ -1,14 +1,15 @@
 package com.example.eisen.sesam;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class ActivityWrapper {
 
-    private List<Activity> activityFeedList;
+    private List<Activity> activityFeedList = new ArrayList<>();
 
-    public ActivityWrapper() {
-        this.activityFeedList = null;
-    }
+    public ActivityWrapper() {}
 
     public ActivityWrapper(List<Activity> activityFeedList) {
         this.activityFeedList = activityFeedList;

@@ -5,7 +5,6 @@ refreshen nachdem NoConnectionBtn geklick wurde
 ->noConnectionBtn verschwindet
  */
 import android.os.Bundle;
-import android.os.Debug;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -21,9 +20,8 @@ import com.google.gson.Gson;
 
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 /**
@@ -32,7 +30,7 @@ import java.util.stream.Collectors;
 public class ActivitiesFragment extends Fragment implements IActivitiesFeed {
 
     private ActivityWrapper activityWrapper = new ActivityWrapper();
-    private List<LinearLayout> activityLayouts = new ArrayList<>();
+    private LinearLayout activityLayout = null;
 
     public ActivitiesFragment() {
         // Required empty public constructor
@@ -51,10 +49,7 @@ public class ActivitiesFragment extends Fragment implements IActivitiesFeed {
     }
 
     private void initLayouts(){
-        activityLayouts.clear();
-        activityLayouts.add((LinearLayout) getView().findViewById(R.id.activityplaceholder0));
-        activityLayouts.add((LinearLayout) getView().findViewById(R.id.activityplaceholder1));
-        activityLayouts.add((LinearLayout) getView().findViewById(R.id.activityplaceholder2));
+        activityLayout = getView().findViewById(R.id.linearlayout_activityFeed_placeholder);
     }
 
     @Override
@@ -62,47 +57,42 @@ public class ActivitiesFragment extends Fragment implements IActivitiesFeed {
         Log.d(MainActivity.MQTTDEBUG_TAG,"hello from activityfragment"+m.toString());
         Gson gson = new Gson();
         activityWrapper = gson.fromJson(m.toString(), ActivityWrapper.class);
-        Log.d(MainActivity.MQTTDEBUG_TAG, activityWrapper.getActivityFeedList().toString());
         refreshFragment();
-
     }
 
     @Override
     public void refreshFragment() {
-        List<Activity> activityFeedList = activityWrapper.getActivityFeedList();
+
+        if(activityWrapper==null)return;
 
         initLayouts();
 
-        if(activityFeedList==null || activityFeedList.size()<activityLayouts.size()){//sonst out of BoundsExc
-            Log.d(MainActivity.MQTTDEBUG_TAG,"activityfeedlist<+"+activityLayouts.size()+" oder null");
-            return;
-        }
+        activityLayout.removeAllViews();
 
-        int index=0;
-        for(LinearLayout activityLayout: activityLayouts){
-            activityLayout.removeAllViews();
+        List<Activity> activityFeedList = activityWrapper.getActivityFeedList();
+        Collections.reverse(activityFeedList);
 
-            View textEntryView = getLayoutInflater().inflate(R.layout.activity_item, activityLayout);
+        for(Activity activity: activityFeedList){
+            Log.d(MainActivity.MQTTDEBUG_TAG, activity.toString());
+
+            View textEntryView = getLayoutInflater().inflate(R.layout.activity_item, null);
             TextView item_attribut;
-
-            item_attribut= (TextView) textEntryView.findViewById(R.id.textView_activity_time);
-            item_attribut.setText(activityFeedList.get(index).getTime()+"Uhr");
-            item_attribut= (TextView) textEntryView.findViewById(R.id.textView_activity_date);
-            item_attribut.setText(activityFeedList.get(index).getDate());
+            item_attribut= (TextView) textEntryView.findViewById(R.id.textView_activity_title);
+            item_attribut.setText(activity.getDate()+System.lineSeparator()+activity.getTime()+"Uhr");
             item_attribut= (TextView) textEntryView.findViewById(R.id.textView_activity_ringNumber);
-            item_attribut.setText(activityFeedList.get(index).getRingNumber() + "Mal");
+            item_attribut.setText(activity.getRingNumber() + "Mal");
             item_attribut= (TextView) textEntryView.findViewById(R.id.textView_activity_wasOpened);
-            item_attribut.setText(activityFeedList.get(index).isWasOpened()? "ja":"nein");
+            item_attribut.setText(activity.isWasOpened()? "ja":"nein");
             item_attribut= (TextView) textEntryView.findViewById(R.id.textView_activity_batteryStatus);
-            item_attribut.setText(activityFeedList.get(index).getBatteryStatus()/2+"V");
+            item_attribut.setText(activity.getBatteryStatus()/2+"V");
             item_attribut= (TextView) textEntryView.findViewById(R.id.textView_activity_openForTitles);
 
-            String titles= activityFeedList.get(index).getOpenForTitles().size()==0? "keine":"";
-            titles+=activityFeedList.get(index).getOpenForTitles().toString()
+            String titles= activity.getOpenForTitles().size()==0? "keine":"";
+            titles+=activity.getOpenForTitles().toString()
                     .replaceAll("[\\[\\]]", "");
 
             item_attribut.setText(titles);
-            index++;
+            activityLayout.addView(textEntryView);
         }
     }
 

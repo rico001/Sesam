@@ -27,28 +27,10 @@
             android:textColor="@android:color/background_light" />
 
         <LinearLayout
-            android:id="@+id/activityplaceholder2"
+            android:id="@+id/linearlayout_activityFeed_placeholder"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
             android:layout_marginTop="20dp"
-            android:layout_marginRight="20dp"
-            android:orientation="vertical"></LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/activityplaceholder1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:orientation="vertical"></LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/activityplaceholder0"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
             android:orientation="vertical"></LinearLayout>
     </LinearLayout>
     </ScrollView>
