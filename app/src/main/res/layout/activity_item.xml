@@ -119,6 +119,7 @@
             android:layout_weight="1"
             android:text="TextView"
             android:textAlignment="textEnd" />
+
     </LinearLayout>
 
     <Space
