@@ -14,4 +14,8 @@
         android:id="@+id/nav_timewidows"
         android:icon="@drawable/baseline_access_time_black_24dp"
         android:title="Zeitfenster" />
+    <item
+        android:id="@+id/nav_activitiesfeed"
+        android:icon="@drawable/round_notes_black_24dp"
+        android:title="Aktivitäten" />
 </menu>

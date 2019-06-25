@@ -14,6 +14,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -27,22 +28,24 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
+import com.example.eisen.sesam.com.example.eisen.interfaces.IUpdatableFragment;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class TimeWindowsFragment extends Fragment {
+public class TimeWindowsFragment extends Fragment implements IUpdatableFragment {
+
+    //DebugTags
+    public static final String UPDATEFRAGMENT_TAG="updateFragment";
 
     private ExpandableListView expListView;
     private ExpandableListAdapter listAdapter;
-    private List<String> listDataHeader;
-    private HashMap<String, List<String>> listDataChild;
+    private List<TimeWindow> timeWindows;
     //_______________Buttons_________________
     private Button buttonSaveTimeWindow;
     private Button buttonDeleteAllWindows;
@@ -77,8 +80,9 @@ public class TimeWindowsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        listDataHeader = ((MainActivity)getActivity()).getSettingsModel().getListDataHeader();
-        listDataChild = ((MainActivity)getActivity()).getSettingsModel().getListDataChild();
+
+        ((MainActivity)getActivity()).setUpdatableFragment(this);
+
         initTimeWindowlist();
         initSeekBars();
         initEditTexts();
@@ -106,8 +110,9 @@ public class TimeWindowsFragment extends Fragment {
     }
 
     private void initTimeWindowlist(){
+        timeWindows = ((MainActivity)getActivity()).getSettingsModel().getTimeWindows();
         expListView = (ExpandableListView) getView().findViewById(R.id.expListViewTimeWidows2);
-        listAdapter = new ExpandableListAdapter(getContext(), listDataHeader, listDataChild);
+        listAdapter = new ExpandableListAdapter(getContext(), timeWindows);
         expListView.setAdapter(listAdapter);
     }
 
@@ -119,21 +124,21 @@ public class TimeWindowsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 addTimeWindow();
-                updateModel();
                 ((MainActivity)getActivity()).saveData();
                 ((MainActivity)getActivity()).sendDataToServer();
             }
         });
 
         buttonDeleteAllWindows = (Button) getView().findViewById(R.id.buttonDeleteAllWindows2);
-        if(((MainActivity)getActivity()).getSettingsModel().getListDataHeader().size()>0) {
+        if(((MainActivity)getActivity()).getSettingsModel().getTimeWindows().size()!=0) {
             buttonDeleteAllWindows.setEnabled(true);
         }
+
+
         buttonDeleteAllWindows.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 deleleteWindowList();
-                updateModel();
                 ((MainActivity)getActivity()).saveData();
                 ((MainActivity)getActivity()).sendDataToServer();
             }
@@ -158,26 +163,20 @@ public class TimeWindowsFragment extends Fragment {
         });
     }
 
-    private void updateModel(){
-        SettingsModel settingsModel=((MainActivity)getActivity()).getSettingsModel();
-        settingsModel.setListDataChild(listDataChild);
-        settingsModel.setListDataHeader(listDataHeader);
-    }
-
     private void addTimeWindow(){
         if(validateInputFields()){
-            listDataHeader.add(editTextTitel.getText().toString());
+
             List<String> data = new ArrayList<String>();
-            data.add(editTextDate1.getText().toString());
-            data.add(editTextDate2.getText().toString());
-            data.add(editTextVon.getText().toString());
-            data.add(editTextBis.getText().toString());
-            data.add(seekbarKlingeln.getProgress()+"");
+            TimeWindow timeWindow = new TimeWindow();
+            timeWindow.setTitle(editTextTitel.getText().toString());
+            timeWindow.setFromDate(editTextDate1.getText().toString());
+            timeWindow.setTillDate(editTextDate2.getText().toString());
+            timeWindow.setFromTime(editTextVon.getText().toString());
+            timeWindow.setTillTime(editTextBis.getText().toString());
+            timeWindow.setRingNumber(seekbarKlingeln.getProgress());
 
-            listDataChild.put(listDataHeader.get(listDataHeader.size()-1), data);
-
-            listAdapter = new ExpandableListAdapter(getContext(), listDataHeader, listDataChild);
-            expListView.setAdapter(listAdapter);
+            timeWindows.add(timeWindow);
+            listAdapter.notifyDataSetChanged();
 
             setEmptyEditTexts();
             buttonSaveTimeWindow.setEnabled(false);
@@ -355,9 +354,8 @@ public class TimeWindowsFragment extends Fragment {
     }
 
     private void deleleteWindowList(){
-        listDataHeader.clear();
-        listDataChild.clear();
-        expListView.setAdapter(listAdapter);
+        timeWindows.clear();
+        listAdapter.notifyDataSetChanged();
         buttonDeleteAllWindows.setEnabled(false);
     }
 
@@ -436,6 +434,18 @@ public class TimeWindowsFragment extends Fragment {
         date+=year;
 
         return date;
+    }
+
+    @Override
+    public void onMainActivityUpdate() {
+        Log.d(IUpdatableFragment.TAG,"timewindowsfragment updated");
+        refreshFragment();
+    }
+
+    @Override
+    public void refreshFragment() {
+        initTimeWindowlist();
+        buttonNoConnection.setVisibility(View.GONE);
     }
 
 

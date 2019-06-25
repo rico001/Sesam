@@ -1,5 +1,6 @@
 package com.example.eisen.sesam;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,11 +15,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import com.example.eisen.sesam.com.example.eisen.interfaces.IUpdatableFragment;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SettingsFragment extends Fragment {
+public class SettingsFragment extends Fragment implements IUpdatableFragment {
+
+    //DebugTags
+    public static final String UPDATEFRAGMENT_TAG="updateFragment";
 
     //________________Buttons______________________
     Button buttonSaveSettings;
@@ -35,7 +40,6 @@ public class SettingsFragment extends Fragment {
 
     public static final String SHARED_PREFS = "sharedPrefs" ;
 
-
     public SettingsFragment() {
 
     }
@@ -50,10 +54,15 @@ public class SettingsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        ((MainActivity)getActivity()).setUpdatableFragment(this);
+
         initButtons();
         initSeekBars();
         initTextViews();
         initEditTexts();
+
+        refreshFragment();
     }
 
     private void initEditTexts() {
@@ -104,7 +113,7 @@ public class SettingsFragment extends Fragment {
 
         //seekBar für Öffnungsdauer einrichten
         seekBarDuration = (SeekBar) getView().findViewById(R.id.seekBarDuration2);
-        seekBarDuration.setProgress(settingsModel.getDuration());
+        seekBarDuration.setProgress(3);
         seekBarDuration.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -126,15 +135,23 @@ public class SettingsFragment extends Fragment {
         textViewDuration.setText(seekBarDuration.getProgress()+" Sekunden");
     }
 
+
     private void updateModel(){
         SettingsModel settingsModel=((MainActivity)getActivity()).getSettingsModel();
         settingsModel.setDuration(seekBarDuration.getProgress());
     }
 
 
+    @Override
+    public void onMainActivityUpdate() {
+        Log.d(IUpdatableFragment.TAG,"settingfragtment updated");
+        refreshFragment();
+    }
 
-
-
+    @Override
+    public void refreshFragment() {
+        seekBarDuration.setProgress(((MainActivity)getActivity()).getSettingsModel().getDuration());
+    }
 
 
 }

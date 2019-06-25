@@ -10,28 +10,43 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
+    public final static int TIMEWINDOW_SKILLS=5;
+
     private Context _context;
-    private List<String> _listDataHeader; // header titles
-    // child data in format of header title, child title
-    private HashMap<String, List<String>> _listDataChild;
+    private List<String> _listDataHeader; //title from timeWindows
+    private List<TimeWindow> _listDataChild;    //timeWindows
     private Button btn;
 
-    public ExpandableListAdapter(Context context, List<String> listDataHeader,
-                                 HashMap<String, List<String>> listChildData) {
+    public ExpandableListAdapter(Context context, List<TimeWindow>  content) {
         this._context = context;
-        this._listDataHeader = listDataHeader;
-        this._listDataChild = listChildData;
+        this._listDataHeader = generateTimeWindowsTitleList(content);
+        this._listDataChild = content;
     }
 
     @Override
     public Object getChild(int groupPosition, int childPosititon) {
-        return this._listDataChild.get(this._listDataHeader.get(groupPosition))
-                .get(childPosititon);
+        TimeWindow timeWindow = _listDataChild.get(groupPosition);
+
+        switch(childPosititon){
+            case 0:
+                return "am " + timeWindow.getFromDate();
+            case 1:
+                return "bis " + timeWindow.getTillDate();
+            case 2:
+                return "ab " + timeWindow.getFromTime() + " Uhr";
+            case 3:
+                return "bis "+ timeWindow.getTillTime() + " Uhr";
+            case 4:
+                return "Klingeln: " + timeWindow.getRingNumber() + " Mal";
+            default:
+                return "?";
+        }
     }
 
     @Override
@@ -51,26 +66,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             convertView = infalInflater.inflate(R.layout.general_settings_item, null);
         }
 
-        if(childPosition==0){
-            childText="am "+childText;
-        }
-        if(childPosition==1){
-            childText="bis "+childText;
-        }
-
-        if(childPosition==2){
-            childText="von "+childText+" Uhr";
-        }
-        if(childPosition==3){
-            childText = "bis  " + childText + " Uhr";
-        }
-
-        if(childPosition==4){
-            childText = "Klingeln: " + childText + " Mal";
-        }
-
-        TextView txtListChild = (TextView) convertView
-                .findViewById(R.id.lblListItem);
+        TextView txtListChild = (TextView) convertView.findViewById(R.id.lblListItem);
 
         txtListChild.setText(childText);
         return convertView;
@@ -78,8 +74,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        return this._listDataChild.get(this._listDataHeader.get(groupPosition))
-                .size();
+        return TIMEWINDOW_SKILLS;
     }
 
     @Override
@@ -123,4 +118,17 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     public boolean isChildSelectable(int groupPosition, int childPosition) {
         return true;
     }
+
+    private ArrayList<String> generateTimeWindowsTitleList(List<TimeWindow> timeWindows){
+        final ArrayList<String> titleList = new ArrayList<>();
+        timeWindows.stream().forEach(timeWindow -> titleList.add(timeWindow.getTitle()));
+        return titleList;
+    }
+
+    @Override
+    public void notifyDataSetChanged() {
+        _listDataHeader=generateTimeWindowsTitleList(_listDataChild);
+        super.notifyDataSetChanged();
+    }
+
 }
