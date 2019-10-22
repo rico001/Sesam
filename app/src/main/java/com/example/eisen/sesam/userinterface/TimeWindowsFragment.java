@@ -54,7 +54,6 @@ public class TimeWindowsFragment extends Fragment implements Observer {
     //_______________Buttons_________________
     private Button buttonSaveTimeWindow;
     private Button buttonDeleteAllWindows;
-    private Button buttonNoConnection;
     //_______________EditTexts_______________
     private EditText editTextTitel;
     private EditText editTextVon;
@@ -147,22 +146,6 @@ public class TimeWindowsFragment extends Fragment implements Observer {
         });
 
         buttonDeleteAllWindows = (Button) getView().findViewById(R.id.buttonDeleteAllWindows2);
-
-
-
-        buttonNoConnection = (Button) getView().findViewById(R.id.buttonNoConnection);
-        if(((MainActivity)getActivity()).getMqttHelper().isConnected()){
-            buttonNoConnection.setVisibility(View.GONE);
-        }else{
-            buttonNoConnection.setVisibility(View.VISIBLE);
-        }
-
-        buttonNoConnection.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((MainActivity) getActivity()).initNewConnection();
-            }
-        });
     }
 
     private void addTimeWindow(){
@@ -439,6 +422,5 @@ public class TimeWindowsFragment extends Fragment implements Observer {
     @Override
     public void update(Observable o, Object arg) {
         initTimeWindowlist((SettingsModel)arg);
-        buttonNoConnection.setVisibility(View.GONE);
     }
 }

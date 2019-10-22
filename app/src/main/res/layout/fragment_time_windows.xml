@@ -15,17 +15,6 @@
         android:orientation="vertical">
 
 
-        <Button
-            android:id="@+id/buttonNoConnection"
-            android:layout_width="match_parent"
-            android:layout_height="20dp"
-            android:background="@android:color/holo_red_light"
-            android:text="Verbindung zum Server Fehlgeschlagen"
-            android:textAllCaps="true"
-            android:textColor="@android:color/background_light"
-            android:textSize="14sp"
-            android:visibility="gone" />
-
         <TextView
             android:id="@+id/textView7"
             android:layout_width="match_parent"

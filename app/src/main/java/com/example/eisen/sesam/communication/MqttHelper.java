@@ -27,33 +27,22 @@ public class MqttHelper{
     private String serverIp;
     private Context context;
 
-    public MqttHelper(final Context context, String ip,MqttCallback mqttCallback){
+    public MqttHelper(final Context context, String ip,MqttCallback mqttCallback, IMqttActionListener iMqttActionListener){
         this.context=context;
         serverIp="tcp://"+ip+":1883";
         mqttAndroidClient = new MqttAndroidClient(context, serverIp, clientId);
         mqttAndroidClient.setCallback(mqttCallback);
-        connect();
+        connect(iMqttActionListener);
     }
 
-    private void connect(){
+    private void connect(IMqttActionListener iMqttActionListener){
         try {
 
             MqttConnectOptions options = new MqttConnectOptions();
             options.setMqttVersion(MqttConnectOptions.MQTT_VERSION_3_1);
             options.setConnectionTimeout(10000);
 
-            mqttAndroidClient.connect(options,context, new IMqttActionListener() {
-                @Override
-                public void onSuccess(IMqttToken asyncActionToken) {
-                    Log.d("Mqtt", "Connect erfolgreich");
-                    subscribeToTopic();
-                }
-
-                @Override
-                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-                    Log.d("Mqtt", "Connect fehlgeschlagen"+ exception.toString());
-                }
-            });
+            mqttAndroidClient.connect(options, context, iMqttActionListener);
 
 
         } catch (MqttException ex){
@@ -62,7 +51,7 @@ public class MqttHelper{
 
     }
 
-    private void subscribeToTopic() {
+    public void subscribeToTopics() {
         try {
             mqttAndroidClient.subscribe(subscriptionTopic, 0);
             mqttAndroidClient.subscribe(Topic_Settings, 0);

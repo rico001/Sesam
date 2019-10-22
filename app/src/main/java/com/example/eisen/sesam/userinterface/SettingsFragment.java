@@ -19,10 +19,13 @@ import com.example.eisen.sesam.R;
 import com.example.eisen.sesam.data.SettingsModel;
 import com.example.eisen.sesam.com.example.eisen.interfaces.IUpdatableFragment;
 
+import java.util.Observable;
+import java.util.Observer;
+
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SettingsFragment extends Fragment implements IUpdatableFragment {
+public class SettingsFragment extends Fragment implements Observer {
 
     //DebugTags
     public static final String UPDATEFRAGMENT_TAG="updateFragment";
@@ -56,15 +59,11 @@ public class SettingsFragment extends Fragment implements IUpdatableFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        ((MainActivity)getActivity()).setUpdatableFragment(this);
-
         initButtons();
         initSeekBars();
         initTextViews();
         initEditTexts();
-
-        refreshFragment();
+        refreshFragment(((MainActivity)getActivity()).getSettingsModel());
     }
 
     private void initEditTexts() {
@@ -133,7 +132,6 @@ public class SettingsFragment extends Fragment implements IUpdatableFragment {
     void initTextViews(){
         //TextViews einrichten
         textViewDuration = (TextView) getView().findViewById(R.id.textViewDuration2);
-
         textViewDuration.setText(seekBarDuration.getProgress()+" Sekunden");
     }
 
@@ -143,17 +141,13 @@ public class SettingsFragment extends Fragment implements IUpdatableFragment {
         settingsModel.setDuration(seekBarDuration.getProgress());
     }
 
-
-    @Override
-    public void onMainActivityUpdate() {
-        Log.d(IUpdatableFragment.TAG,"settingfragtment updated");
-        refreshFragment();
-    }
-
-    @Override
-    public void refreshFragment() {
-        seekBarDuration.setProgress(((MainActivity)getActivity()).getSettingsModel().getDuration());
+    public void refreshFragment(SettingsModel settingsModel) {
+        seekBarDuration.setProgress((settingsModel.getDuration()));
     }
 
 
+    @Override
+    public void update(Observable o, Object arg) {
+        refreshFragment((SettingsModel)arg);
+    }
 }

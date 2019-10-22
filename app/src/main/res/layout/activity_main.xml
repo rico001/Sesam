@@ -7,6 +7,14 @@
     android:background="#c2c2c2"
     android:orientation="vertical">
 
+    <Button
+        android:id="@+id/button_connectionfail"
+        android:layout_width="match_parent"
+        android:layout_height="29dp"
+        android:background="#9FE30000"
+        android:text="Verbindung zum Server fehlgeschlagen"
+        android:textColor="@android:color/background_light" />
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">

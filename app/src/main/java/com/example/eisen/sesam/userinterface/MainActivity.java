@@ -11,21 +11,25 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
+import com.example.eisen.sesam.com.example.eisen.interfaces.IUpdatableFragment;
 import com.example.eisen.sesam.data.ActivityWrapper;
 import com.example.eisen.sesam.communication.MqttHelper;
 import com.example.eisen.sesam.R;
 import com.example.eisen.sesam.data.SettingsModel;
-import com.example.eisen.sesam.com.example.eisen.interfaces.IUpdatableFragment;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
+import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
-public class MainActivity extends AppCompatActivity implements MqttCallback{
+public class MainActivity extends AppCompatActivity implements MqttCallback, IMqttActionListener{
 
     //DebugTags
     public static final String MQTTDEBUG_TAG="mqttdebug";
@@ -39,7 +43,9 @@ public class MainActivity extends AppCompatActivity implements MqttCallback{
 
     //________________Menu_________________________________________________________
     private BottomNavigationView mMainNav;
-    //private Button buttonNoConnection;
+
+    //________________Button_______________________________________________________
+    private Button button_connectionfail;
 
     //_____________Fragments_______________________________________________________
     private OpenDoorFragment openDoorFragment = new OpenDoorFragment();
@@ -96,15 +102,16 @@ public class MainActivity extends AppCompatActivity implements MqttCallback{
                 }
             }
         });
-
+        
+        initButton();
         initMqttHelper();
         initSettingsModel();
         initActivityWrapper();
     }
-    
+
     private void initMqttHelper(){
         String ip= loadIP();
-        mqttHelper = new MqttHelper(getApplicationContext(),ip,this);
+        mqttHelper = new MqttHelper(getApplicationContext(),ip,this, this);
     }
 
 
@@ -136,6 +143,7 @@ public class MainActivity extends AppCompatActivity implements MqttCallback{
             Gson gson = new Gson();
             settingsModel = gson.fromJson(jsonLoad, SettingsModel.class);
             settingsModel.addObserver(timeWindowsFragment);
+            settingsModel.addObserver(settingsFragment);
 
         }else{
             Log.d("JSON", "SAVESETTINGS existiert noch nicht");
@@ -191,21 +199,12 @@ public class MainActivity extends AppCompatActivity implements MqttCallback{
     }
 
     public void initNewConnection(){
-        mqttHelper = new MqttHelper(getApplicationContext(),loadIP(),this);
+        mqttHelper = new MqttHelper(getApplicationContext(),loadIP(),this, this);
     }
-
-    public boolean ConectionToServer(){
-       return mqttHelper.isConnected();
-    }
-
-    public void setUpdatableFragment(IUpdatableFragment updatableFragment){
-        Log.d(IUpdatableFragment.TAG,"add"+updatableFragment.getClass().getSimpleName());
-        updatableFragments = updatableFragment;
-    }
-
 
     @Override
     public void connectionLost(Throwable cause) {
+        button_connectionfail.setVisibility(View.VISIBLE);
         Log.d(MQTTDEBUG_TAG,"connectionLost");
         Toast.makeText(this,"Serververbindung verloren",Toast.LENGTH_SHORT).show();
     }
@@ -237,4 +236,25 @@ public class MainActivity extends AppCompatActivity implements MqttCallback{
         return activityWrapper;
     }
 
+    public void initButton(){
+        button_connectionfail = (Button) findViewById(R.id.button_connectionfail);
+        button_connectionfail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                initNewConnection();
+            }
+        });
+    }
+
+    @Override
+    public void onSuccess(IMqttToken asyncActionToken) {
+        Log.d("Mqtt", "Connect erfolgreich");
+        mqttHelper.subscribeToTopics();
+        button_connectionfail.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+        button_connectionfail.setVisibility(View.VISIBLE);
+    }
 }
