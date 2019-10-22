@@ -1,4 +1,4 @@
-package com.example.eisen.sesam;
+package com.example.eisen.sesam.communication;
 
 import android.content.Context;
 import android.util.Log;

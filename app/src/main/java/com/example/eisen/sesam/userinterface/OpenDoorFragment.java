@@ -1,4 +1,4 @@
-package com.example.eisen.sesam;
+package com.example.eisen.sesam.userinterface;
 
 import android.content.Context;
 import android.os.Build;
@@ -16,6 +16,9 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.ImageView;
+
+import com.example.eisen.sesam.R;
+import com.example.eisen.sesam.data.SettingsModel;
 
 /**
  * A simple {@link Fragment} subclass.

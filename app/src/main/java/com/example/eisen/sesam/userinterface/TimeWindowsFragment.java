@@ -1,4 +1,4 @@
-package com.example.eisen.sesam;
+package com.example.eisen.sesam.userinterface;
 
 /*TODO
 refreshen nachdem NoConnectionBtn geklick wurde
@@ -28,24 +28,29 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
+
+import com.example.eisen.sesam.R;
+import com.example.eisen.sesam.data.SettingsModel;
+import com.example.eisen.sesam.data.TimeWindow;
 import com.example.eisen.sesam.com.example.eisen.interfaces.IUpdatableFragment;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class TimeWindowsFragment extends Fragment implements IUpdatableFragment {
+public class TimeWindowsFragment extends Fragment implements Observer {
 
     //DebugTags
     public static final String UPDATEFRAGMENT_TAG="updateFragment";
 
     private ExpandableListView expListView;
     private ExpandableListAdapter listAdapter;
-    private List<TimeWindow> timeWindows;
     //_______________Buttons_________________
     private Button buttonSaveTimeWindow;
     private Button buttonDeleteAllWindows;
@@ -81,9 +86,7 @@ public class TimeWindowsFragment extends Fragment implements IUpdatableFragment 
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ((MainActivity)getActivity()).setUpdatableFragment(this);
-
-        initTimeWindowlist();
+        initTimeWindowlist(((MainActivity)getActivity()).getSettingsModel());
         initSeekBars();
         initEditTexts();
         initButtons();
@@ -109,10 +112,9 @@ public class TimeWindowsFragment extends Fragment implements IUpdatableFragment 
         });
     }
 
-    private void initTimeWindowlist(){
-        timeWindows = ((MainActivity)getActivity()).getSettingsModel().getTimeWindows();
+    private void initTimeWindowlist(SettingsModel settingsModel){
         expListView = (ExpandableListView) getView().findViewById(R.id.expListViewTimeWidows2);
-        listAdapter = new ExpandableListAdapter(getContext(), timeWindows);
+        listAdapter = new ExpandableListAdapter(getContext(), settingsModel.getTimeWindows());
         expListView.setAdapter(listAdapter);
     }
 
@@ -175,8 +177,7 @@ public class TimeWindowsFragment extends Fragment implements IUpdatableFragment 
             timeWindow.setTillTime(editTextBis.getText().toString());
             timeWindow.setRingNumber(seekbarKlingeln.getProgress());
 
-            timeWindows.add(timeWindow);
-            listAdapter.notifyDataSetChanged();
+            listAdapter.addTimeWindow(timeWindow);
 
             setEmptyEditTexts();
             buttonSaveTimeWindow.setEnabled(false);
@@ -354,8 +355,7 @@ public class TimeWindowsFragment extends Fragment implements IUpdatableFragment 
     }
 
     private void deleleteWindowList(){
-        timeWindows.clear();
-        listAdapter.notifyDataSetChanged();
+        listAdapter.clearTimeWindows();
         buttonDeleteAllWindows.setEnabled(false);
     }
 
@@ -437,16 +437,8 @@ public class TimeWindowsFragment extends Fragment implements IUpdatableFragment 
     }
 
     @Override
-    public void onMainActivityUpdate() {
-        Log.d(IUpdatableFragment.TAG,"timewindowsfragment updated");
-        refreshFragment();
-    }
-
-    @Override
-    public void refreshFragment() {
-        initTimeWindowlist();
+    public void update(Observable o, Object arg) {
+        initTimeWindowlist((SettingsModel)arg);
         buttonNoConnection.setVisibility(View.GONE);
     }
-
-
 }

@@ -1,10 +1,9 @@
-package com.example.eisen.sesam;
+package com.example.eisen.sesam.userinterface;
 
 /*TODO
 refreshen nachdem NoConnectionBtn geklick wurde
 ->noConnectionBtn verschwindet
  */
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,26 +14,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.example.eisen.sesam.com.example.eisen.interfaces.IActivitiesFeed;
-import com.google.gson.Gson;
-
-import org.eclipse.paho.client.mqttv3.MqttMessage;
-
-import java.util.Collections;
+import com.example.eisen.sesam.data.Activity;
+import com.example.eisen.sesam.data.ActivityWrapper;
+import com.example.eisen.sesam.R;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ActivitiesFragment extends Fragment implements IActivitiesFeed {
+public class ActivitiesFragment extends Fragment implements Observer {
 
-    private ActivityWrapper activityWrapper = new ActivityWrapper();
     private LinearLayout activityLayout = null;
 
     public ActivitiesFragment() {
-        // Required empty public constructor
     }
 
     @Override
@@ -46,25 +41,14 @@ public class ActivitiesFragment extends Fragment implements IActivitiesFeed {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        refreshFragment();
+        refreshFragment(((MainActivity)getActivity()).getActivityWrapper());
     }
 
     private void initLayouts(){
         activityLayout = getView().findViewById(R.id.linearlayout_activityFeed_placeholder);
     }
 
-    @Override
-    public void onMainActivityReceiveActivities(MqttMessage m) {
-        Log.d(MainActivity.MQTTDEBUG_TAG,"hello from activityfragment"+m.toString());
-        Gson gson = new Gson();
-        activityWrapper = gson.fromJson(m.toString(), ActivityWrapper.class);
-        refreshFragment();
-    }
-
-    @Override
-    public void refreshFragment() {
-
-        if(activityWrapper==null)return;
+    public void refreshFragment(ActivityWrapper activityWrapper) {
 
         initLayouts();
 
@@ -96,4 +80,9 @@ public class ActivitiesFragment extends Fragment implements IActivitiesFeed {
         }
     }
 
+    @Override
+    public void update(Observable o, Object arg) {
+        if(arg==null)return;
+        refreshFragment((ActivityWrapper)arg);
+    }
 }

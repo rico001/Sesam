@@ -1,10 +1,8 @@
-package com.example.eisen.sesam;
+package com.example.eisen.sesam.userinterface;
 
-import android.app.AlarmManager;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Debug;
-import android.os.Handler;
+import android.databinding.Observable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
@@ -13,10 +11,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
+import com.example.eisen.sesam.data.ActivityWrapper;
+import com.example.eisen.sesam.communication.MqttHelper;
+import com.example.eisen.sesam.R;
+import com.example.eisen.sesam.data.SettingsModel;
 import com.example.eisen.sesam.com.example.eisen.interfaces.IUpdatableFragment;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
@@ -24,9 +24,6 @@ import com.google.gson.JsonSyntaxException;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements MqttCallback{
 
@@ -38,7 +35,7 @@ public class MainActivity extends AppCompatActivity implements MqttCallback{
     public static final String SAVESETIINGS="savesettings";
     public static final String SERVERIP="IP";
 
-    public static final String IP="192.168.178.80";
+    public static final String IP="192.168.2.108";
 
     //________________Menu_________________________________________________________
     private BottomNavigationView mMainNav;
@@ -49,17 +46,16 @@ public class MainActivity extends AppCompatActivity implements MqttCallback{
     private SettingsFragment settingsFragment = new SettingsFragment();
     private TimeWindowsFragment timeWindowsFragment = new TimeWindowsFragment();
     private ActivitiesFragment activitiesFragment = new ActivitiesFragment();
+    IUpdatableFragment updatableFragments;
 
     //____________mqtt_____________________________________________________________
     private MqttHelper mqttHelper;
     final String SETTINGSTOPIC = "Sesam/Settings/date";
     final String TOPIC_ACTIVITYFEED = "Sesam/activityfeed";
 
-    //__________________Model______________________________________________________
+    //__________________Data______________________________________________________
     private SettingsModel settingsModel;
-    private ActivityWrapper activityWrapper;
-
-    IUpdatableFragment updatableFragments;
+    private ActivityWrapper activityWrapper = new ActivityWrapper();
 
 
     @Override
@@ -101,14 +97,11 @@ public class MainActivity extends AppCompatActivity implements MqttCallback{
             }
         });
 
-        settingsModel= new SettingsModel();
-
         initMqttHelper();
-
-
-        loadData();
-//        initButtons();
+        initSettingsModel();
+        initActivityWrapper();
     }
+    
     private void initMqttHelper(){
         String ip= loadIP();
         mqttHelper = new MqttHelper(getApplicationContext(),ip,this);
@@ -133,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements MqttCallback{
         return settingsModel;
     }
 
-    public void loadData(){
+    public void initSettingsModel(){
 
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
         if(sharedPreferences.contains(SAVESETIINGS)) {
@@ -142,10 +135,16 @@ public class MainActivity extends AppCompatActivity implements MqttCallback{
             Log.d("JSON", jsonLoad);
             Gson gson = new Gson();
             settingsModel = gson.fromJson(jsonLoad, SettingsModel.class);
+            settingsModel.addObserver(timeWindowsFragment);
 
         }else{
             Log.d("JSON", "SAVESETTINGS existiert noch nicht");
         }
+    }
+
+    public void initActivityWrapper(){
+        activityWrapper = new ActivityWrapper();
+        activityWrapper.addObserver(activitiesFragment);
     }
 
     public String loadIP(){
@@ -220,14 +219,11 @@ public class MainActivity extends AppCompatActivity implements MqttCallback{
     @Override
     public void messageArrived(String topic, MqttMessage message){
         if(topic.equals(SETTINGSTOPIC)){
-            Log.d(MQTTDEBUG_TAG,"messageArrived"+message.toString());
-            Gson gson = new Gson();
-            settingsModel = gson.fromJson(message.toString(), SettingsModel.class);
-            updatableFragments.onMainActivityUpdate();
+            settingsModel.refresh(new Gson().fromJson(message.toString(), SettingsModel.class));
         }
 
         if(topic.equals(TOPIC_ACTIVITYFEED)){
-            activitiesFragment.onMainActivityReceiveActivities(message);
+            activityWrapper.setActivityFeedList(new Gson().fromJson(message.toString(), ActivityWrapper.class).getActivityFeedList());
         }
     }
 
@@ -235,6 +231,10 @@ public class MainActivity extends AppCompatActivity implements MqttCallback{
     public void deliveryComplete(IMqttDeliveryToken token) {
         Log.d(MQTTDEBUG_TAG,"deliveryComplete");
         Toast.makeText(this,"Übermittlung zum Server erfolgreich",Toast.LENGTH_SHORT).show();
+    }
+
+    public ActivityWrapper getActivityWrapper() {
+        return activityWrapper;
     }
 
 }

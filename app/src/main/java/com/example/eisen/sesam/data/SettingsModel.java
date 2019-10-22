@@ -1,13 +1,14 @@
-package com.example.eisen.sesam;
+package com.example.eisen.sesam.data;
 
+
+import android.util.Log;
 
 import com.google.gson.Gson;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Observable;
 
-public class SettingsModel {
+public class SettingsModel extends Observable {
 
     private int duration;
 
@@ -38,6 +39,13 @@ public class SettingsModel {
         Gson gson = new Gson();
         String settingsDataJSON = gson.toJson(s);
         return settingsDataJSON;
+    }
+
+    public void refresh(SettingsModel s) {
+        setDuration(s.getDuration());
+        setTimeWindowWrapper(s.getTimeWindows());
+        setChanged();
+        notifyObservers(this);
     }
 
 

@@ -1,9 +1,10 @@
-package com.example.eisen.sesam;
+package com.example.eisen.sesam.data;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
 
-public class ActivityWrapper {
+public class ActivityWrapper extends Observable {
 
     private List<Activity> activityFeedList = new ArrayList<>();
 
@@ -11,6 +12,8 @@ public class ActivityWrapper {
 
     public ActivityWrapper(List<Activity> activityFeedList) {
         this.activityFeedList = activityFeedList;
+        setChanged();
+        notifyObservers();
     }
 
     public List<Activity> getActivityFeedList() {
@@ -19,6 +22,11 @@ public class ActivityWrapper {
 
     public void setActivityFeedList(List<Activity> activityFeedList) {
         this.activityFeedList = activityFeedList;
+        setChanged();
+        notifyObservers(this);
     }
+
+
+
 
 }

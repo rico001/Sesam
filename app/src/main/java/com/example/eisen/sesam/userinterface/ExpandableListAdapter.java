@@ -1,4 +1,4 @@
-package com.example.eisen.sesam;
+package com.example.eisen.sesam.userinterface;
 
 import android.content.Context;
 
@@ -7,11 +7,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
-import android.widget.Button;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import com.example.eisen.sesam.R;
+import com.example.eisen.sesam.data.TimeWindow;
+
 import java.util.List;
 
 public class ExpandableListAdapter extends BaseExpandableListAdapter {
@@ -19,19 +19,16 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     public final static int TIMEWINDOW_SKILLS=5;
 
     private Context _context;
-    private List<String> _listDataHeader; //title from timeWindows
-    private List<TimeWindow> _listDataChild;    //timeWindows
-    private Button btn;
+    private List<TimeWindow> timeWindows;    //timeWindows
 
     public ExpandableListAdapter(Context context, List<TimeWindow>  content) {
         this._context = context;
-        this._listDataHeader = generateTimeWindowsTitleList(content);
-        this._listDataChild = content;
+        this.timeWindows = content;
     }
 
     @Override
     public Object getChild(int groupPosition, int childPosititon) {
-        TimeWindow timeWindow = _listDataChild.get(groupPosition);
+        TimeWindow timeWindow = timeWindows.get(groupPosition);
 
         switch(childPosititon){
             case 0:
@@ -79,12 +76,12 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public Object getGroup(int groupPosition) {
-        return this._listDataHeader.get(groupPosition);
+        return this.timeWindows.get(groupPosition).getTitle();
     }
 
     @Override
     public int getGroupCount() {
-        return this._listDataHeader.size();
+        return this.timeWindows.size();
     }
 
     @Override
@@ -119,16 +116,28 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         return true;
     }
 
-    private ArrayList<String> generateTimeWindowsTitleList(List<TimeWindow> timeWindows){
-        final ArrayList<String> titleList = new ArrayList<>();
-        timeWindows.stream().forEach(timeWindow -> titleList.add(timeWindow.getTitle()));
-        return titleList;
-    }
-
     @Override
     public void notifyDataSetChanged() {
-        _listDataHeader=generateTimeWindowsTitleList(_listDataChild);
         super.notifyDataSetChanged();
+    }
+
+    public List<TimeWindow> getTimeWindows() {
+        return timeWindows;
+    }
+
+    public void setTimeWindows(List<TimeWindow> timeWindows) {
+        this.timeWindows = timeWindows;
+        notifyDataSetChanged();
+    }
+
+    public void clearTimeWindows() {
+        this.timeWindows.clear();
+        notifyDataSetChanged();
+    }
+
+    public void addTimeWindow(TimeWindow timeWindow) {
+        this.timeWindows.add(timeWindow);
+        notifyDataSetChanged();
     }
 
 }

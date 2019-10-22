@@ -1,6 +1,5 @@
-package com.example.eisen.sesam;
+package com.example.eisen.sesam.userinterface;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,6 +14,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
+
+import com.example.eisen.sesam.R;
+import com.example.eisen.sesam.data.SettingsModel;
 import com.example.eisen.sesam.com.example.eisen.interfaces.IUpdatableFragment;
 
 /**

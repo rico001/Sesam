@@ -1,4 +1,4 @@
-package com.example.eisen.sesam;
+package com.example.eisen.sesam.data;
 
 public class TimeWindow{
 

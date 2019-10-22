@@ -1,4 +1,4 @@
-package com.example.eisen.sesam;
+package com.example.eisen.sesam.data;
 import java.util.List;
 
 public class Activity{
