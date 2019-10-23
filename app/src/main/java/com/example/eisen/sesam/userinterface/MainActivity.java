@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.example.eisen.sesam.data.ActivityWrapper;
 import com.example.eisen.sesam.communication.MqttHelper;
 import com.example.eisen.sesam.R;
+import com.example.eisen.sesam.storage.StorageOrganizer;
 import com.example.eisen.sesam.data.SettingsModel;
 import com.google.gson.Gson;
 
@@ -128,17 +129,10 @@ public class MainActivity extends AppCompatActivity implements MqttCallback, IMq
     }
 
     public void initSettingsModel(){
-
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
-        if(sharedPreferences.contains(SAVESETIINGS)) {
-
-            String jsonLoad= sharedPreferences.getString(SAVESETIINGS, "");
-            Log.d("JSON", jsonLoad);
-            Gson gson = new Gson();
-            settingsModel = gson.fromJson(jsonLoad, SettingsModel.class);
-            Log.d("TEST",settingsModel.countObservers()+"STÜCK");
-        }else{
-            Log.d("JSON", "SAVESETTINGS existiert noch nicht");
+        try{
+            settingsModel= StorageOrganizer.loadObject(this,SHARED_PREFS,SAVESETIINGS,SettingsModel.class);
+        }catch (InstantiationException | IllegalAccessException e){
+            Log.d("loaddata",e.toString());
         }
     }
 
@@ -159,32 +153,15 @@ public class MainActivity extends AppCompatActivity implements MqttCallback, IMq
     }
 
     public String loadIP(){
-
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
-        if(sharedPreferences.contains(SERVERIP)) {
-            String ip= sharedPreferences.getString(SERVERIP, "");
-            Log.d("Mqtt", ip);
-            return ip;
-        }else{
-            Log.d("IP", "SERVERIP existiert noch nicht");
-            return MainActivity.IP;
-        }
+        return StorageOrganizer.loadString(this,SHARED_PREFS,SERVERIP);
     }
 
     public void saveIP(String ip){
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(SERVERIP, ip);
-        editor.commit();
+        StorageOrganizer.saveString(this,SHARED_PREFS,SERVERIP,ip);
     }
 
     public void saveData(){
-        Gson gson = new Gson();
-        String jsonSave = gson.toJson(settingsModel);
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(SAVESETIINGS, jsonSave);
-        editor.commit();
+        StorageOrganizer.saveObject(this,SHARED_PREFS,SAVESETIINGS, settingsModel);
     }
 
     public void sendDataToServer(){
