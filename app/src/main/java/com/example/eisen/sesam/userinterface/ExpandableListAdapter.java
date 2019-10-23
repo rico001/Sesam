@@ -2,7 +2,6 @@ package com.example.eisen.sesam.userinterface;
 
 import android.content.Context;
 
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,7 +12,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.eisen.sesam.R;
-import com.example.eisen.sesam.data.TimeWindow;
+import com.example.eisen.sesam.data.mqtt.TimeWindow;
 
 import java.util.List;
 

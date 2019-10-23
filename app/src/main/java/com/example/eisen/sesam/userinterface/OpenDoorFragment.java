@@ -18,7 +18,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.example.eisen.sesam.R;
-import com.example.eisen.sesam.data.SettingsModel;
+import com.example.eisen.sesam.data.mqtt.EspSettings;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -53,11 +53,11 @@ public class OpenDoorFragment extends Fragment {
         buttonOpenDoor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SettingsModel settingsModel=((MainActivity)getActivity()).getSettingsModel();
+                EspSettings espSettings =((MainActivity)getActivity()).getEspSettings();
                 String data="";
-                data+=settingsModel.getDuration();
+                data+= espSettings.getDuration();
                 ((MainActivity)getActivity()).sendDataToServer(OPENDOORTOPIC,data,false); //ESp sendet nach öffnen leeren string!!
-                startAnim(settingsModel.getDuration());
+                startAnim(espSettings.getDuration());
             }
         });
 

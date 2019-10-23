@@ -16,7 +16,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.example.eisen.sesam.R;
-import com.example.eisen.sesam.data.SettingsModel;
+import com.example.eisen.sesam.data.mqtt.EspSettings;
 
 import java.util.Observable;
 import java.util.Observer;
@@ -40,7 +40,7 @@ public class SettingsFragment extends Fragment implements Observer {
     //_______________EditTexts_____________________
     private EditText editTextServerIP;
     //______________Observable_____________________
-    SettingsModel observableSettingsmodel;
+    EspSettings observableSettingsmodel;
     private boolean ipChanged= false;
 
     public static final String SHARED_PREFS = "sharedPrefs" ;
@@ -64,7 +64,7 @@ public class SettingsFragment extends Fragment implements Observer {
         initTextViews();
         initEditTexts();
 
-        observableSettingsmodel =((MainActivity)getActivity()).getSettingsModel();
+        observableSettingsmodel =((MainActivity)getActivity()).getEspSettings();
         observableSettingsmodel.addObserver(this);
 
         refreshFragment(observableSettingsmodel);
@@ -139,12 +139,12 @@ public class SettingsFragment extends Fragment implements Observer {
 
 
     private void updateModel(){
-        SettingsModel settingsModel=((MainActivity)getActivity()).getSettingsModel();
-        settingsModel.setDuration(seekBarDuration.getProgress());
+        EspSettings espSettings =((MainActivity)getActivity()).getEspSettings();
+        espSettings.setDuration(seekBarDuration.getProgress());
     }
 
-    public void refreshFragment(SettingsModel settingsModel) {
-        seekBarDuration.setProgress((settingsModel.getDuration()));
+    public void refreshFragment(EspSettings espSettings) {
+        seekBarDuration.setProgress((espSettings.getDuration()));
         seekBarDuration.invalidate();
         Log.d("TEST2",observableSettingsmodel.getDuration()+"settdur");
         Log.d("TEST2",seekBarDuration.getProgress()+"prog");
@@ -153,7 +153,7 @@ public class SettingsFragment extends Fragment implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        refreshFragment((SettingsModel)o);
+        refreshFragment((EspSettings)o);
         Log.d("TEST2","update Settngsfrag");
     }
 

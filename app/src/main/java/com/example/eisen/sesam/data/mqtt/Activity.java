@@ -1,4 +1,4 @@
-package com.example.eisen.sesam.data;
+package com.example.eisen.sesam.data.mqtt;
 import java.util.List;
 
 public class Activity{

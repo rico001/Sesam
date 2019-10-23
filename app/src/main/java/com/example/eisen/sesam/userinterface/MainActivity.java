@@ -1,7 +1,5 @@
 package com.example.eisen.sesam.userinterface;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
@@ -14,11 +12,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.example.eisen.sesam.data.ActivityWrapper;
+import com.example.eisen.sesam.data.mqtt.ActivityWrapper;
 import com.example.eisen.sesam.communication.MqttHelper;
 import com.example.eisen.sesam.R;
+import com.example.eisen.sesam.data.mqtt.EspSettings;
 import com.example.eisen.sesam.storage.StorageOrganizer;
-import com.example.eisen.sesam.data.SettingsModel;
 import com.google.gson.Gson;
 
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
@@ -57,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements MqttCallback, IMq
     final String TOPIC_ACTIVITYFEED = "Sesam/activityfeed";
 
     //__________________Data______________________________________________________
-    private SettingsModel settingsModel;
+    private EspSettings espSettings;
     private ActivityWrapper activityWrapper = new ActivityWrapper();
 
 
@@ -130,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements MqttCallback, IMq
 
     public void initSettingsModel(){
         try{
-            settingsModel= StorageOrganizer.loadObject(this,SHARED_PREFS,SAVESETIINGS,SettingsModel.class);
+            espSettings = StorageOrganizer.loadObject(this,SHARED_PREFS,SAVESETIINGS, EspSettings.class);
         }catch (InstantiationException | IllegalAccessException e){
             Log.d("loaddata",e.toString());
         }
@@ -148,8 +146,8 @@ public class MainActivity extends AppCompatActivity implements MqttCallback, IMq
         }
     }
 
-    public SettingsModel getSettingsModel() {
-        return settingsModel;
+    public EspSettings getEspSettings() {
+        return espSettings;
     }
 
     public String loadIP(){
@@ -161,12 +159,12 @@ public class MainActivity extends AppCompatActivity implements MqttCallback, IMq
     }
 
     public void saveData(){
-        StorageOrganizer.saveObject(this,SHARED_PREFS,SAVESETIINGS, settingsModel);
+        StorageOrganizer.saveObject(this,SHARED_PREFS,SAVESETIINGS, espSettings);
     }
 
     public void sendDataToServer(){
-       // String data =SettingsModel.createDatesStringforMqtt(settingsModel);
-        String data =SettingsModel.convertSettingsToJSON(settingsModel);
+       // String data =EspSettings.createDatesStringforMqtt(espSettings);
+        String data = EspSettings.convertSettingsToJSON(espSettings);
         pubTo(data, SETTINGSTOPIC, true);
     }
 
@@ -197,7 +195,7 @@ public class MainActivity extends AppCompatActivity implements MqttCallback, IMq
     public void messageArrived(String topic, MqttMessage message){
         if(topic.equals(SETTINGSTOPIC)){
             Log.d("TEST",message.toString());
-            settingsModel.update(new Gson().fromJson(message.toString(), SettingsModel.class));
+            espSettings.update(new Gson().fromJson(message.toString(), EspSettings.class));
         }
 
         if(topic.equals(TOPIC_ACTIVITYFEED)){

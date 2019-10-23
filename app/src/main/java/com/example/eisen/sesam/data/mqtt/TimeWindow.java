@@ -1,4 +1,4 @@
-package com.example.eisen.sesam.data;
+package com.example.eisen.sesam.data.mqtt;
 
 public class TimeWindow{
 

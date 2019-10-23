@@ -30,8 +30,8 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.example.eisen.sesam.R;
-import com.example.eisen.sesam.data.SettingsModel;
-import com.example.eisen.sesam.data.TimeWindow;
+import com.example.eisen.sesam.data.mqtt.EspSettings;
+import com.example.eisen.sesam.data.mqtt.TimeWindow;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -66,7 +66,7 @@ public class TimeWindowsFragment extends Fragment implements Observer {
     private DatePickerDialog datePickerDialog;
     private TimePickerDialog timePickerDialog;
     //__________Observable___________________
-    SettingsModel observableSettinsmodel;
+    EspSettings observableSettinsmodel;
 
     boolean editTextIsTouched=false;
 
@@ -89,7 +89,7 @@ public class TimeWindowsFragment extends Fragment implements Observer {
         initEditTexts();
         initButtons();
 
-        observableSettinsmodel =((MainActivity)getActivity()).getSettingsModel();
+        observableSettinsmodel =((MainActivity)getActivity()).getEspSettings();
         observableSettinsmodel.addObserver(this);
         
         refreshFragment(observableSettinsmodel);
@@ -116,9 +116,9 @@ public class TimeWindowsFragment extends Fragment implements Observer {
         });
     }
 
-    private void refreshFragment(SettingsModel settingsModel){
+    private void refreshFragment(EspSettings espSettings){
         expListView = (ExpandableListView) getView().findViewById(R.id.expListViewTimeWidows2);
-        listAdapter = new ExpandableListAdapter(getContext(), settingsModel.getTimeWindows());
+        listAdapter = new ExpandableListAdapter(getContext(), espSettings.getTimeWindows());
         expListView.setAdapter(listAdapter);
     }
 
@@ -136,7 +136,7 @@ public class TimeWindowsFragment extends Fragment implements Observer {
         });
 
         buttonDeleteAllWindows = (Button) getView().findViewById(R.id.buttonDeleteAllWindows2);
-        if(((MainActivity)getActivity()).getSettingsModel().getTimeWindows().size()!=0) {
+        if(((MainActivity)getActivity()).getEspSettings().getTimeWindows().size()!=0) {
             buttonDeleteAllWindows.setEnabled(true);
         }
 
@@ -426,7 +426,7 @@ public class TimeWindowsFragment extends Fragment implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        refreshFragment((SettingsModel)o);
+        refreshFragment((EspSettings)o);
         Log.d("TEST2","updat Timewindows -Frag");
     }
 

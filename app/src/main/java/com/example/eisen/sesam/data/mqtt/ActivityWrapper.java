@@ -1,9 +1,8 @@
-package com.example.eisen.sesam.data;
+package com.example.eisen.sesam.data.mqtt;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
-import java.util.Observer;
 
 public class ActivityWrapper extends Observable {
 
