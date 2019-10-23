@@ -91,6 +91,7 @@ public class TimeWindowsFragment extends Fragment implements Observer {
 
         observableSettinsmodel =((MainActivity)getActivity()).getSettingsModel();
         observableSettinsmodel.addObserver(this);
+        
         refreshFragment(observableSettinsmodel);
         
     }
