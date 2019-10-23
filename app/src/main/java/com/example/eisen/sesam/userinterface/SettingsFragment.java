@@ -17,7 +17,6 @@ import android.widget.TextView;
 
 import com.example.eisen.sesam.R;
 import com.example.eisen.sesam.data.SettingsModel;
-import com.example.eisen.sesam.com.example.eisen.interfaces.IUpdatableFragment;
 
 import java.util.Observable;
 import java.util.Observer;
@@ -39,8 +38,9 @@ public class SettingsFragment extends Fragment implements Observer {
     //________________TextViews____________________
     TextView textViewDuration;
     //_______________EditTexts_____________________
-
     private EditText editTextServerIP;
+    //______________Observable_____________________
+    SettingsModel observableSettingsmodel;
     private boolean ipChanged= false;
 
     public static final String SHARED_PREFS = "sharedPrefs" ;
@@ -63,7 +63,11 @@ public class SettingsFragment extends Fragment implements Observer {
         initSeekBars();
         initTextViews();
         initEditTexts();
-        refreshFragment(((MainActivity)getActivity()).getSettingsModel());
+
+        observableSettingsmodel =((MainActivity)getActivity()).getSettingsModel();
+        observableSettingsmodel.addObserver(this);
+
+        refreshFragment(observableSettingsmodel);
     }
 
     private void initEditTexts() {
@@ -110,8 +114,6 @@ public class SettingsFragment extends Fragment implements Observer {
     }
 
     void initSeekBars(){
-        SettingsModel settingsModel=((MainActivity)getActivity()).getSettingsModel();
-
         //seekBar für Öffnungsdauer einrichten
         seekBarDuration = (SeekBar) getView().findViewById(R.id.seekBarDuration2);
         seekBarDuration.setProgress(3);
@@ -143,11 +145,22 @@ public class SettingsFragment extends Fragment implements Observer {
 
     public void refreshFragment(SettingsModel settingsModel) {
         seekBarDuration.setProgress((settingsModel.getDuration()));
+        seekBarDuration.invalidate();
+        Log.d("TEST2",observableSettingsmodel.getDuration()+"settdur");
+        Log.d("TEST2",seekBarDuration.getProgress()+"prog");
     }
 
 
     @Override
     public void update(Observable o, Object arg) {
-        refreshFragment((SettingsModel)arg);
+        refreshFragment((SettingsModel)o);
+        Log.d("TEST2","update Settngsfrag");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        observableSettingsmodel.deleteObserver(this);
+        Log.d("TEST2","Settingsfrag destroy");
     }
 }

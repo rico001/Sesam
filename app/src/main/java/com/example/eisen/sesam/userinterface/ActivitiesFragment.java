@@ -28,6 +28,7 @@ import java.util.Observer;
 public class ActivitiesFragment extends Fragment implements Observer {
 
     private LinearLayout activityLayout = null;
+    private ActivityWrapper observableActivityWrapper;
 
     public ActivitiesFragment() {
     }
@@ -41,7 +42,10 @@ public class ActivitiesFragment extends Fragment implements Observer {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        refreshFragment(((MainActivity)getActivity()).getActivityWrapper());
+
+        observableActivityWrapper =((MainActivity)getActivity()).getActivityWrapper();
+        observableActivityWrapper.addObserver(this);
+        refreshFragment(observableActivityWrapper);
     }
 
     private void initLayouts(){
@@ -84,5 +88,12 @@ public class ActivitiesFragment extends Fragment implements Observer {
     public void update(Observable o, Object arg) {
         if(arg==null)return;
         refreshFragment((ActivityWrapper)arg);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        observableActivityWrapper.deleteObserver(this);
+        Log.d("TEST2","Settingsfrag destroy");
     }
 }

@@ -2,7 +2,6 @@ package com.example.eisen.sesam.userinterface;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.databinding.Observable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
@@ -15,13 +14,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.example.eisen.sesam.com.example.eisen.interfaces.IUpdatableFragment;
 import com.example.eisen.sesam.data.ActivityWrapper;
 import com.example.eisen.sesam.communication.MqttHelper;
 import com.example.eisen.sesam.R;
 import com.example.eisen.sesam.data.SettingsModel;
 import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
 
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
@@ -52,7 +49,6 @@ public class MainActivity extends AppCompatActivity implements MqttCallback, IMq
     private SettingsFragment settingsFragment = new SettingsFragment();
     private TimeWindowsFragment timeWindowsFragment = new TimeWindowsFragment();
     private ActivitiesFragment activitiesFragment = new ActivitiesFragment();
-    IUpdatableFragment updatableFragments;
 
     //____________mqtt_____________________________________________________________
     private MqttHelper mqttHelper;
@@ -71,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements MqttCallback, IMq
 
         //Menü einrichten
         mMainNav = (BottomNavigationView) findViewById(R.id.main_nav);
-        setFragment(openDoorFragment);
+        initFragmentTransaction(openDoorFragment);
         mMainNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
@@ -79,22 +75,22 @@ public class MainActivity extends AppCompatActivity implements MqttCallback, IMq
 
                     case R.id.nav_open:
                         //mMainNav.setItemBackgroundResource(R.color.colorAccent);
-                        setFragment(openDoorFragment);
+                        initFragmentTransaction(openDoorFragment);
                         return true;
 
                     case R.id.nav_timewidows:
                         //mMainNav.setItemBackgroundResource(R.color.colorAccent);
-                        setFragment(timeWindowsFragment);
+                        initFragmentTransaction(timeWindowsFragment);
                         return true;
 
                     case R.id.nav_settings:
                         //mMainNav.setItemBackgroundResource(R.color.colorAccent);
-                        setFragment(settingsFragment);
+                        initFragmentTransaction(settingsFragment);
                         return true;
 
                     case R.id.nav_activitiesfeed:
                         //mMainNav.setItemBackgroundResource(R.color.colorAccent);
-                        setFragment(activitiesFragment);
+                        initFragmentTransaction(activitiesFragment);
                         return true;
 
                         default:
@@ -102,11 +98,11 @@ public class MainActivity extends AppCompatActivity implements MqttCallback, IMq
                 }
             }
         });
-        
+
         initButton();
-        initMqttHelper();
         initSettingsModel();
         initActivityWrapper();
+        initMqttHelper();
     }
 
     private void initMqttHelper(){
@@ -115,10 +111,39 @@ public class MainActivity extends AppCompatActivity implements MqttCallback, IMq
     }
 
 
-    private void setFragment(Fragment fragment){
+    private void initFragmentTransaction(Fragment fragment){
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.main_frame, fragment);
         fragmentTransaction.commit();
+    }
+
+    public void initButton(){
+        button_connectionfail = (Button) findViewById(R.id.button_connectionfail);
+        button_connectionfail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                initNewConnection();
+            }
+        });
+    }
+
+    public void initSettingsModel(){
+
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
+        if(sharedPreferences.contains(SAVESETIINGS)) {
+
+            String jsonLoad= sharedPreferences.getString(SAVESETIINGS, "");
+            Log.d("JSON", jsonLoad);
+            Gson gson = new Gson();
+            settingsModel = gson.fromJson(jsonLoad, SettingsModel.class);
+            Log.d("TEST",settingsModel.countObservers()+"STÜCK");
+        }else{
+            Log.d("JSON", "SAVESETTINGS existiert noch nicht");
+        }
+    }
+
+    public void initActivityWrapper(){
+        activityWrapper = new ActivityWrapper();
     }
 
     public void pubTo(String message, String anyTopic, boolean retainFlag){
@@ -131,28 +156,6 @@ public class MainActivity extends AppCompatActivity implements MqttCallback, IMq
 
     public SettingsModel getSettingsModel() {
         return settingsModel;
-    }
-
-    public void initSettingsModel(){
-
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
-        if(sharedPreferences.contains(SAVESETIINGS)) {
-
-            String jsonLoad= sharedPreferences.getString(SAVESETIINGS, "");
-            Log.d("JSON", jsonLoad);
-            Gson gson = new Gson();
-            settingsModel = gson.fromJson(jsonLoad, SettingsModel.class);
-            settingsModel.addObserver(timeWindowsFragment);
-            settingsModel.addObserver(settingsFragment);
-
-        }else{
-            Log.d("JSON", "SAVESETTINGS existiert noch nicht");
-        }
-    }
-
-    public void initActivityWrapper(){
-        activityWrapper = new ActivityWrapper();
-        activityWrapper.addObserver(activitiesFragment);
     }
 
     public String loadIP(){
@@ -202,6 +205,10 @@ public class MainActivity extends AppCompatActivity implements MqttCallback, IMq
         mqttHelper = new MqttHelper(getApplicationContext(),loadIP(),this, this);
     }
 
+    public ActivityWrapper getActivityWrapper() {
+        return activityWrapper;
+    }
+
     @Override
     public void connectionLost(Throwable cause) {
         button_connectionfail.setVisibility(View.VISIBLE);
@@ -209,20 +216,15 @@ public class MainActivity extends AppCompatActivity implements MqttCallback, IMq
         Toast.makeText(this,"Serververbindung verloren",Toast.LENGTH_SHORT).show();
     }
 
-    /**
-     * bug!
-     * @param topic
-     * @param message
-     * @throws JsonSyntaxException
-     */
     @Override
     public void messageArrived(String topic, MqttMessage message){
         if(topic.equals(SETTINGSTOPIC)){
-            settingsModel.refresh(new Gson().fromJson(message.toString(), SettingsModel.class));
+            Log.d("TEST",message.toString());
+            settingsModel.update(new Gson().fromJson(message.toString(), SettingsModel.class));
         }
 
         if(topic.equals(TOPIC_ACTIVITYFEED)){
-            activityWrapper.setActivityFeedList(new Gson().fromJson(message.toString(), ActivityWrapper.class).getActivityFeedList());
+            activityWrapper.update(new Gson().fromJson(message.toString(), ActivityWrapper.class));
         }
     }
 
@@ -230,20 +232,6 @@ public class MainActivity extends AppCompatActivity implements MqttCallback, IMq
     public void deliveryComplete(IMqttDeliveryToken token) {
         Log.d(MQTTDEBUG_TAG,"deliveryComplete");
         Toast.makeText(this,"Übermittlung zum Server erfolgreich",Toast.LENGTH_SHORT).show();
-    }
-
-    public ActivityWrapper getActivityWrapper() {
-        return activityWrapper;
-    }
-
-    public void initButton(){
-        button_connectionfail = (Button) findViewById(R.id.button_connectionfail);
-        button_connectionfail.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                initNewConnection();
-            }
-        });
     }
 
     @Override

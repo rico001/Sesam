@@ -1,12 +1,15 @@
 package com.example.eisen.sesam.data;
 
 
+import android.text.style.UpdateAppearance;
+import android.text.style.UpdateLayout;
 import android.util.Log;
 
 import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
+import java.util.Observer;
 
 public class SettingsModel extends Observable {
 
@@ -41,13 +44,11 @@ public class SettingsModel extends Observable {
         return settingsDataJSON;
     }
 
-    public void refresh(SettingsModel s) {
+    public void update(SettingsModel s) {
         setDuration(s.getDuration());
         setTimeWindowWrapper(s.getTimeWindows());
         setChanged();
-        notifyObservers(this);
+        notifyObservers();
+        Log.d("TEST2","refresh observeranzahl"+countObservers());
     }
-
-
-
 }

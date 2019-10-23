@@ -32,7 +32,6 @@ import android.widget.Toast;
 import com.example.eisen.sesam.R;
 import com.example.eisen.sesam.data.SettingsModel;
 import com.example.eisen.sesam.data.TimeWindow;
-import com.example.eisen.sesam.com.example.eisen.interfaces.IUpdatableFragment;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -66,6 +65,8 @@ public class TimeWindowsFragment extends Fragment implements Observer {
     //__________TimePicker___________________
     private DatePickerDialog datePickerDialog;
     private TimePickerDialog timePickerDialog;
+    //__________Observable___________________
+    SettingsModel observableSettinsmodel;
 
     boolean editTextIsTouched=false;
 
@@ -84,11 +85,14 @@ public class TimeWindowsFragment extends Fragment implements Observer {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        initTimeWindowlist(((MainActivity)getActivity()).getSettingsModel());
         initSeekBars();
         initEditTexts();
         initButtons();
+
+        observableSettinsmodel =((MainActivity)getActivity()).getSettingsModel();
+        observableSettinsmodel.addObserver(this);
+        refreshFragment(observableSettinsmodel);
+        
     }
 
     void initSeekBars(){
@@ -111,7 +115,7 @@ public class TimeWindowsFragment extends Fragment implements Observer {
         });
     }
 
-    private void initTimeWindowlist(SettingsModel settingsModel){
+    private void refreshFragment(SettingsModel settingsModel){
         expListView = (ExpandableListView) getView().findViewById(R.id.expListViewTimeWidows2);
         listAdapter = new ExpandableListAdapter(getContext(), settingsModel.getTimeWindows());
         expListView.setAdapter(listAdapter);
@@ -421,6 +425,14 @@ public class TimeWindowsFragment extends Fragment implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        initTimeWindowlist((SettingsModel)arg);
+        refreshFragment((SettingsModel)o);
+        Log.d("TEST2","updat Timewindows -Frag");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        observableSettinsmodel.deleteObserver(this);
+        Log.d("TEST2","timewindows -frag destroy");
     }
 }

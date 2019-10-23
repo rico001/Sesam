@@ -3,6 +3,7 @@ package com.example.eisen.sesam.data;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
+import java.util.Observer;
 
 public class ActivityWrapper extends Observable {
 
@@ -20,13 +21,10 @@ public class ActivityWrapper extends Observable {
         return activityFeedList;
     }
 
-    public void setActivityFeedList(List<Activity> activityFeedList) {
-        this.activityFeedList = activityFeedList;
+    public void update(ActivityWrapper activityWrapper) {
+        this.activityFeedList = activityWrapper.getActivityFeedList();
         setChanged();
         notifyObservers(this);
     }
-
-
-
 
 }
