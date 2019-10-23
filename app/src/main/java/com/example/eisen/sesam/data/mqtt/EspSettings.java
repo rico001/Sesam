@@ -12,8 +12,6 @@ public class EspSettings extends Observable {
 
     private int duration;
 
-    private String brokerIP;
-
     private List<TimeWindow> timeWindows;
 
     public EspSettings() {

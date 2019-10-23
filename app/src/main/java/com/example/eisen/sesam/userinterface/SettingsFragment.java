@@ -16,6 +16,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.example.eisen.sesam.R;
+import com.example.eisen.sesam.data.app.AppSettings;
 import com.example.eisen.sesam.data.mqtt.EspSettings;
 
 import java.util.Observable;
@@ -40,7 +41,9 @@ public class SettingsFragment extends Fragment implements Observer {
     //_______________EditTexts_____________________
     private EditText editTextServerIP;
     //______________Observable_____________________
-    EspSettings observableSettingsmodel;
+    EspSettings observableEspSettings;
+    //______________Data___________________________
+    AppSettings appSettings;
     private boolean ipChanged= false;
 
     public static final String SHARED_PREFS = "sharedPrefs" ;
@@ -62,17 +65,18 @@ public class SettingsFragment extends Fragment implements Observer {
         initButtons();
         initSeekBars();
         initTextViews();
+
+        appSettings = ((MainActivity)getActivity()).getAppSettings();
+        observableEspSettings =((MainActivity)getActivity()).getEspSettings();
+        observableEspSettings.addObserver(this);
+
         initEditTexts();
-
-        observableSettingsmodel =((MainActivity)getActivity()).getEspSettings();
-        observableSettingsmodel.addObserver(this);
-
-        refreshFragment(observableSettingsmodel);
+        refreshFragment(observableEspSettings);
     }
 
     private void initEditTexts() {
         editTextServerIP = (EditText) getView().findViewById(R.id.editTextServerIP);
-        editTextServerIP.setText(((MainActivity)getActivity()).loadIP());
+        editTextServerIP.setText(appSettings.getBrokerIP());
         editTextServerIP.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -98,8 +102,8 @@ public class SettingsFragment extends Fragment implements Observer {
             @Override
             public void onClick(View v) {
                 v.setEnabled(false);
-                updateModel();
-                ((MainActivity)getActivity()).saveIP(editTextServerIP.getText().toString());
+                observableEspSettings.setDuration(seekBarDuration.getProgress());
+                appSettings.setBrokerIP(editTextServerIP.getText().toString());
                 ((MainActivity)getActivity()).saveData();
                 ((MainActivity)getActivity()).sendDataToServer();
 
@@ -137,16 +141,10 @@ public class SettingsFragment extends Fragment implements Observer {
         textViewDuration.setText(seekBarDuration.getProgress()+" Sekunden");
     }
 
-
-    private void updateModel(){
-        EspSettings espSettings =((MainActivity)getActivity()).getEspSettings();
-        espSettings.setDuration(seekBarDuration.getProgress());
-    }
-
     public void refreshFragment(EspSettings espSettings) {
         seekBarDuration.setProgress((espSettings.getDuration()));
         seekBarDuration.invalidate();
-        Log.d("TEST2",observableSettingsmodel.getDuration()+"settdur");
+        Log.d("TEST2", observableEspSettings.getDuration()+"settdur");
         Log.d("TEST2",seekBarDuration.getProgress()+"prog");
     }
 
@@ -160,7 +158,7 @@ public class SettingsFragment extends Fragment implements Observer {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        observableSettingsmodel.deleteObserver(this);
+        observableEspSettings.deleteObserver(this);
         Log.d("TEST2","Settingsfrag destroy");
     }
 }

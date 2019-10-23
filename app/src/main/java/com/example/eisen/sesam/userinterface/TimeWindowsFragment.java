@@ -85,13 +85,13 @@ public class TimeWindowsFragment extends Fragment implements Observer {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        initSeekBars();
-        initEditTexts();
-        initButtons();
 
         observableSettinsmodel =((MainActivity)getActivity()).getEspSettings();
         observableSettinsmodel.addObserver(this);
-        
+
+        initSeekBars();
+        initEditTexts();
+        initButtons();
         refreshFragment(observableSettinsmodel);
         
     }
@@ -118,28 +118,23 @@ public class TimeWindowsFragment extends Fragment implements Observer {
 
     private void refreshFragment(EspSettings espSettings){
         expListView = (ExpandableListView) getView().findViewById(R.id.expListViewTimeWidows2);
-        listAdapter = new ExpandableListAdapter(getContext(), espSettings.getTimeWindows());
+        listAdapter = new ExpandableListAdapter(getContext(), espSettings.getTimeWindows(), ((MainActivity)getActivity()));
         expListView.setAdapter(listAdapter);
     }
 
     void initButtons(){
-
-
         buttonSaveTimeWindow = (Button) getView().findViewById(R.id.buttonSaveTimeWindow2);
         buttonSaveTimeWindow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 addTimeWindow();
-                ((MainActivity)getActivity()).saveData();
-                ((MainActivity)getActivity()).sendDataToServer();
             }
         });
 
         buttonDeleteAllWindows = (Button) getView().findViewById(R.id.buttonDeleteAllWindows2);
-        if(((MainActivity)getActivity()).getEspSettings().getTimeWindows().size()!=0) {
+        if(observableSettinsmodel.getTimeWindows().size()!=0) {
             buttonDeleteAllWindows.setEnabled(true);
         }
-
 
         buttonDeleteAllWindows.setOnClickListener(new View.OnClickListener() {
             @Override

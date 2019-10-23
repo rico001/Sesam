@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.eisen.sesam.R;
+import com.example.eisen.sesam.data.mqtt.EspSettings;
 import com.example.eisen.sesam.data.mqtt.TimeWindow;
 
 import java.util.List;
@@ -22,10 +23,13 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     private Context _context;
     private List<TimeWindow> timeWindows;    //timeWindows
+    private MainActivity mainActivity;
 
-    public ExpandableListAdapter(Context context, List<TimeWindow>  content) {
+
+    public ExpandableListAdapter(Context context, List<TimeWindow>  content, MainActivity mainActivity) {
         this._context = context;
         this.timeWindows = content;
+        this.mainActivity = mainActivity;
     }
 
     @Override
@@ -130,6 +134,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     @Override
     public void notifyDataSetChanged() {
         super.notifyDataSetChanged();
+        mainActivity.saveData();
+        mainActivity.sendDataToServer();
     }
 
     public List<TimeWindow> getTimeWindows() {
@@ -150,5 +156,6 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         this.timeWindows.add(timeWindow);
         notifyDataSetChanged();
     }
+
 
 }

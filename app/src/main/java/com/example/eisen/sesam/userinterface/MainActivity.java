@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.example.eisen.sesam.data.app.AppSettings;
 import com.example.eisen.sesam.data.mqtt.ActivityWrapper;
 import com.example.eisen.sesam.communication.MqttHelper;
 import com.example.eisen.sesam.R;
@@ -31,8 +32,9 @@ public class MainActivity extends AppCompatActivity implements MqttCallback, IMq
     public static final String MQTTDEBUG_TAG="mqttdebug";
 
     //_____________________SAVE DATA LOCAL_________________________________________
-    public static final String SHARED_PREFS = "sharedPrefs" ;
-    public static final String SAVESETIINGS="savesettings";
+    public static final String SHARED_PREFS = "SHARED_PREFS" ;
+    public static final String SAVE_ESP_SETIINGS ="SAVE_ESP_SETIINGS";
+    public static final String SAVE_APP_SETIINGS ="SAVE_APP_SETIINGS";
     public static final String SERVERIP="IP";
 
     public static final String IP="192.168.2.108";
@@ -57,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements MqttCallback, IMq
     //__________________Data______________________________________________________
     private EspSettings espSettings;
     private ActivityWrapper activityWrapper = new ActivityWrapper();
+    private AppSettings appSettings = new AppSettings();
 
 
     @Override
@@ -99,14 +102,12 @@ public class MainActivity extends AppCompatActivity implements MqttCallback, IMq
         });
 
         initButton();
-        initSettingsModel();
-        initActivityWrapper();
+        initData();
         initMqttHelper();
     }
 
     private void initMqttHelper(){
-        String ip= loadIP();
-        mqttHelper = new MqttHelper(getApplicationContext(),ip,this, this);
+        mqttHelper = new MqttHelper(getApplicationContext(),appSettings.getBrokerIP(),this, this);
     }
 
 
@@ -126,16 +127,14 @@ public class MainActivity extends AppCompatActivity implements MqttCallback, IMq
         });
     }
 
-    public void initSettingsModel(){
+    public void initData(){
         try{
-            espSettings = StorageOrganizer.loadObject(this,SHARED_PREFS,SAVESETIINGS, EspSettings.class);
+            activityWrapper = new ActivityWrapper();
+            appSettings = StorageOrganizer.loadObject(this,SHARED_PREFS, SAVE_APP_SETIINGS, AppSettings.class);
+            espSettings = StorageOrganizer.loadObject(this,SHARED_PREFS, SAVE_ESP_SETIINGS, EspSettings.class);
         }catch (InstantiationException | IllegalAccessException e){
             Log.d("loaddata",e.toString());
         }
-    }
-
-    public void initActivityWrapper(){
-        activityWrapper = new ActivityWrapper();
     }
 
     public void pubTo(String message, String anyTopic, boolean retainFlag){
@@ -150,16 +149,9 @@ public class MainActivity extends AppCompatActivity implements MqttCallback, IMq
         return espSettings;
     }
 
-    public String loadIP(){
-        return StorageOrganizer.loadString(this,SHARED_PREFS,SERVERIP);
-    }
-
-    public void saveIP(String ip){
-        StorageOrganizer.saveString(this,SHARED_PREFS,SERVERIP,ip);
-    }
-
     public void saveData(){
-        StorageOrganizer.saveObject(this,SHARED_PREFS,SAVESETIINGS, espSettings);
+        StorageOrganizer.saveObject(this,SHARED_PREFS, SAVE_ESP_SETIINGS, espSettings);
+        StorageOrganizer.saveObject(this,SHARED_PREFS, SAVE_APP_SETIINGS, appSettings);
     }
 
     public void sendDataToServer(){
@@ -177,11 +169,15 @@ public class MainActivity extends AppCompatActivity implements MqttCallback, IMq
     }
 
     public void initNewConnection(){
-        mqttHelper = new MqttHelper(getApplicationContext(),loadIP(),this, this);
+        mqttHelper = new MqttHelper(getApplicationContext(),appSettings.getBrokerIP(),this, this);
     }
 
     public ActivityWrapper getActivityWrapper() {
         return activityWrapper;
+    }
+
+    public AppSettings getAppSettings() {
+        return appSettings;
     }
 
     @Override
