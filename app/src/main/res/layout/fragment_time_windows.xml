@@ -176,25 +176,14 @@
             android:id="@+id/expListViewTimeWidows2"
             style="@android:style/Widget.DeviceDefault.ExpandableListView"
             android:layout_width="match_parent"
-            android:layout_height="219dp"
+            android:layout_height="match_parent"
             android:layout_gravity="top"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
+            android:layout_marginBottom="10dp"
             android:longClickable="true">
 
         </ExpandableListView>
-
-        <Button
-            android:id="@+id/buttonDeleteAllWindows2"
-            style="@style/Widget.AppCompat.Button.Colored"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:enabled="false"
-            android:text="Lösche Alle Zeitfenster"
-            android:visibility="visible" />
 
     </LinearLayout>
 

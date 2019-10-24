@@ -51,7 +51,6 @@ public class TimeWindowsFragment extends Fragment implements Observer {
     private ExpandableListAdapter listAdapter;
     //_______________Buttons_________________
     private Button buttonSaveTimeWindow;
-    private Button buttonDeleteAllWindows;
     //_______________EditTexts_______________
     private EditText editTextTitel;
     private EditText editTextVon;
@@ -129,22 +128,6 @@ public class TimeWindowsFragment extends Fragment implements Observer {
                 addTimeWindow();
             }
         });
-
-        buttonDeleteAllWindows = (Button) getView().findViewById(R.id.buttonDeleteAllWindows2);
-        if(observableEspSettings.getTimeWindows().size()!=0) {
-            buttonDeleteAllWindows.setEnabled(true);
-        }
-
-        buttonDeleteAllWindows.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                deleleteWindowList();
-                ((MainActivity)getActivity()).saveData(false,false,true);
-                ((MainActivity)getActivity()).sendDataToServer(MqttHelper.TOPIC_ESP_SETTINGS,observableEspSettings.convertSettingsToJSON(),true);
-            }
-        });
-
-        buttonDeleteAllWindows = (Button) getView().findViewById(R.id.buttonDeleteAllWindows2);
     }
 
     private void addTimeWindow(){
@@ -160,10 +143,8 @@ public class TimeWindowsFragment extends Fragment implements Observer {
             timeWindow.setRingNumber(seekbarKlingeln.getProgress());
 
             listAdapter.addTimeWindow(timeWindow);
-
             setEmptyEditTexts();
             buttonSaveTimeWindow.setEnabled(false);
-            buttonDeleteAllWindows.setEnabled(true);
         }else{
             Toast.makeText(getContext(),"Füllen Sie alle Felder aus, um ein\n      Zeitfenster hinzuzufügen.",Toast.LENGTH_SHORT).show();
         }
@@ -334,11 +315,6 @@ public class TimeWindowsFragment extends Fragment implements Observer {
                 return false;
             }
         });
-    }
-
-    private void deleleteWindowList(){
-        listAdapter.clearTimeWindows();
-        buttonDeleteAllWindows.setEnabled(false);
     }
 
     private void setEmptyEditTexts(){

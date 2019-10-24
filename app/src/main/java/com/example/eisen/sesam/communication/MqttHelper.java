@@ -41,10 +41,8 @@ public class MqttHelper{
             MqttConnectOptions options = new MqttConnectOptions();
             options.setMqttVersion(MqttConnectOptions.MQTT_VERSION_3_1);
             options.setConnectionTimeout(10000);
-
+            options.setKeepAliveInterval(20);
             mqttAndroidClient.connect(options, context, iMqttActionListener);
-
-
         } catch (MqttException ex){
             Log.d("Mqtt", "HALLOO");
         }
