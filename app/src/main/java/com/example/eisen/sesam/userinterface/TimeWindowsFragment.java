@@ -33,7 +33,9 @@ import com.example.eisen.sesam.R;
 import com.example.eisen.sesam.communication.MqttHelper;
 import com.example.eisen.sesam.data.mqtt.EspSettings;
 import com.example.eisen.sesam.data.mqtt.TimeWindow;
+import com.example.eisen.sesam.userinterface.utils.DateEditText;
 import com.example.eisen.sesam.userinterface.utils.ExpandableListAdapter;
+import com.example.eisen.sesam.userinterface.utils.TimeEditText;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -53,20 +55,16 @@ public class TimeWindowsFragment extends Fragment implements Observer {
     private Button buttonSaveTimeWindow;
     //_______________EditTexts_______________
     private EditText editTextTitel;
-    private EditText editTextVon;
-    private EditText editTextBis;
-    private TextView editTextDate2;
-    private TextView editTextDate1;
+    private TimeEditText editTextVon;
+    private TimeEditText editTextBis;
+    private DateEditText editTextDate2;
+    private DateEditText editTextDate1;
+    //_______________Textviews______________
     private TextView textViewTime;
     //_______________Seekbars_______________
     SeekBar seekbarKlingeln;
-    //__________TimePicker___________________
-    private DatePickerDialog datePickerDialog;
-    private TimePickerDialog timePickerDialog;
     //__________Observable___________________
     EspSettings observableEspSettings;
-
-    boolean editTextIsTouched=false;
 
     public TimeWindowsFragment() {
         // Required empty public constructor
@@ -157,7 +155,6 @@ public class TimeWindowsFragment extends Fragment implements Observer {
 
         //init EditTexts
         editTextTitel = (EditText) getView().findViewById(R.id.editTextTitel2);
-
         editTextTitel.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -174,147 +171,14 @@ public class TimeWindowsFragment extends Fragment implements Observer {
             }
         });
 
-        editTextDate2 = (TextView) getView().findViewById(R.id.editTextDate2);
-        editTextDate2.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if(editTextIsTouched==false) {
-                    editTextIsTouched = true;
 
-                    Calendar c;
-                    c = Calendar.getInstance();
-                    int day = c.get(Calendar.DAY_OF_MONTH);
-                    int month = c.get(Calendar.MONTH);
-                    int year = c.get(Calendar.YEAR);
+        editTextDate2 = (DateEditText) getView().findViewById(R.id.editTextDate2);
+        editTextDate1 = (DateEditText) getView().findViewById(R.id.editTextDate1);
 
-                    datePickerDialog = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
-                        @Override
-                        public void onDateSet(DatePicker view, int mYear, int mMonth, int dayOfMonth) {
-                            String date= formatDate(dayOfMonth,mMonth+1,mYear);
-                            //editTextDate2.setText(dayOfMonth + "." + (mMonth + 1) + "." + mYear);
-                            editTextDate2.setText(date);
-                            closeKeyboard();
-                        }
-                    }, year, month, day);
+        editTextVon = (TimeEditText) getView().findViewById(R.id.editTextVon2);
+        editTextBis = (TimeEditText) getView().findViewById(R.id.editTextBis2);
+        editTextBis.setDefaulTime(23,59);
 
-                    datePickerDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-                        @Override
-                        public void onShow(DialogInterface dialog) {
-
-                            editTextIsTouched = false;
-                        }
-                    });
-                    datePickerDialog.show();
-                }
-                return false;
-            }
-        });
-
-        editTextDate1 = (TextView) getView().findViewById(R.id.editTextDate1);
-        editTextDate1.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if(editTextIsTouched==false) {
-                    editTextIsTouched = true;
-
-                    Calendar c;
-                    c = Calendar.getInstance();
-                    int day = c.get(Calendar.DAY_OF_MONTH);
-                    int month = c.get(Calendar.MONTH);
-                    int year = c.get(Calendar.YEAR);
-
-                    datePickerDialog = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
-                        @Override
-                        public void onDateSet(DatePicker view, int mYear, int mMonth, int dayOfMonth) {
-                            String date= formatDate(dayOfMonth,mMonth+1,mYear);
-                            //editTextDate2.setText(dayOfMonth + "." + (mMonth + 1) + "." + mYear);
-                            editTextDate1.setText(date);
-                            closeKeyboard();
-                        }
-                    }, year, month, day);
-
-                    datePickerDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-                        @Override
-                        public void onShow(DialogInterface dialog) {
-
-                            editTextIsTouched = false;
-                        }
-                    });
-                    datePickerDialog.show();
-                }
-                return false;
-            }
-        });
-
-        editTextVon = (EditText) getView().findViewById(R.id.editTextVon2);
-        editTextVon.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if(editTextIsTouched==false) {
-                    editTextIsTouched = true;
-
-                    Calendar c;
-                    c = Calendar.getInstance();
-                    int min = c.get(Calendar.MINUTE);
-                    int hour = c.get(Calendar.HOUR);
-
-                    timePickerDialog = new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener() {
-                        @Override
-                        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                            String timeText= formatTime(hourOfDay,minute);
-                            editTextVon.setText(timeText);
-                        }
-
-                    },hour,min,true);
-
-                    timePickerDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-                        @Override
-                        public void onShow(DialogInterface dialog) {
-                            editTextIsTouched = false;
-                        }
-                    });
-
-                    timePickerDialog.show();
-                }
-                return false;
-            }
-        });
-
-        editTextBis = (EditText) getView().findViewById(R.id.editTextBis2);
-        editTextBis.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if(editTextIsTouched==false) {
-                    editTextIsTouched = true;
-
-                    /*
-                    Calendar c;
-                    c = Calendar.getInstance();
-                    int min = c.get(Calendar.MINUTE);
-                    int hour = c.get(Calendar.HOUR);
-                    */
-
-                    timePickerDialog = new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener() {
-                        @Override
-                        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                            String timeText= formatTime(hourOfDay,minute);
-                            editTextBis.setText(timeText);
-                        }
-
-                    },23,59,true);
-
-                    timePickerDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-                        @Override
-                        public void onShow(DialogInterface dialog) {
-                            editTextIsTouched = false;
-                        }
-                    });
-
-                    timePickerDialog.show();
-                }
-                return false;
-            }
-        });
     }
 
     private void setEmptyEditTexts(){
@@ -346,52 +210,6 @@ public class TimeWindowsFragment extends Fragment implements Observer {
         }
 
         return correct;
-    }
-
-    private void closeKeyboard(){
-        View view = getActivity().getCurrentFocus();
-        if(view!=null){
-            InputMethodManager imm= (InputMethodManager) getActivity().getSystemService((Context.INPUT_METHOD_SERVICE));
-            imm.hideSoftInputFromWindow(view.getWindowToken(),0);
-        }
-    }
-
-    private String formatTime(int hour, int min) {
-        String time = "";
-
-        if (hour < 10){
-            time+="0"+hour+":";
-        }else{
-            time+=hour+":";
-        }
-
-        if (min < 10){
-            time+="0"+min;
-        }else{
-            time+=min;
-        }
-
-        return time;
-    }
-
-    private String formatDate(int day, int month, int year) {
-        String date = "";
-
-        if (day < 10){
-            date+="0"+day+".";
-        }else{
-            date+=day+".";
-        }
-
-        if (month < 10){
-            date+="0"+month+".";
-        }else{
-            date+=month+".";
-        }
-
-        date+=year;
-
-        return date;
     }
 
     @Override

@@ -45,7 +45,7 @@
             android:layout_marginRight="5dp"
             android:orientation="horizontal">
 
-            <EditText
+            <com.example.eisen.sesam.userinterface.utils.DateEditText
                 android:id="@+id/editTextDate1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -55,7 +55,7 @@
                 android:inputType="date"
                 android:textColor="@color/colorPrimary" />
 
-            <EditText
+            <com.example.eisen.sesam.userinterface.utils.DateEditText
                 android:id="@+id/editTextDate2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -74,7 +74,7 @@
             android:layout_marginRight="5dp"
             android:orientation="horizontal">
 
-            <EditText
+            <com.example.eisen.sesam.userinterface.utils.TimeEditText
                 android:id="@+id/editTextVon2"
                 style="@style/Widget.AppCompat.EditText"
                 android:layout_width="wrap_content"
@@ -85,7 +85,7 @@
                 android:inputType="time"
                 android:textColor="@color/colorPrimary" />
 
-            <EditText
+            <com.example.eisen.sesam.userinterface.utils.TimeEditText
                 android:id="@+id/editTextBis2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
