@@ -16,6 +16,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.example.eisen.sesam.R;
+import com.example.eisen.sesam.communication.MqttHelper;
 import com.example.eisen.sesam.data.app.AppSettings;
 import com.example.eisen.sesam.data.mqtt.EspSettings;
 
@@ -26,9 +27,6 @@ import java.util.Observer;
  * A simple {@link Fragment} subclass.
  */
 public class SettingsFragment extends Fragment implements Observer {
-
-    //DebugTags
-    public static final String UPDATEFRAGMENT_TAG="updateFragment";
 
     //________________Buttons______________________
     Button buttonSaveSettings;
@@ -45,8 +43,6 @@ public class SettingsFragment extends Fragment implements Observer {
     //______________Data___________________________
     AppSettings appSettings;
     private boolean ipChanged= false;
-
-    public static final String SHARED_PREFS = "sharedPrefs" ;
 
     public SettingsFragment() {
 
@@ -104,11 +100,12 @@ public class SettingsFragment extends Fragment implements Observer {
                 v.setEnabled(false);
                 observableEspSettings.setDuration(seekBarDuration.getProgress());
                 appSettings.setBrokerIP(editTextServerIP.getText().toString());
-                ((MainActivity)getActivity()).saveData();
-                ((MainActivity)getActivity()).sendDataToServer();
+                ((MainActivity)getActivity()).saveData(observableEspSettings);
+                ((MainActivity)getActivity()).sendDataToServer(MqttHelper.TOPIC_ESP_SETTINGS,observableEspSettings.convertSettingsToJSON(),true);
 
                 if(ipChanged==true) {
-                    ((MainActivity) getActivity()).initNewConnection();
+                    ((MainActivity)getActivity()).saveData(appSettings);
+                    ((MainActivity) getActivity()).initMqttConnection();
                     Log.d("IP","ip geändert und reconnect init");
                     ipChanged=false;
                 }

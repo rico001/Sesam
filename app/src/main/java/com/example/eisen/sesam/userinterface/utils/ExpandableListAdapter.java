@@ -1,4 +1,4 @@
-package com.example.eisen.sesam.userinterface;
+package com.example.eisen.sesam.userinterface.utils;
 
 import android.content.Context;
 
@@ -12,8 +12,10 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.eisen.sesam.R;
+import com.example.eisen.sesam.communication.MqttHelper;
 import com.example.eisen.sesam.data.mqtt.EspSettings;
 import com.example.eisen.sesam.data.mqtt.TimeWindow;
+import com.example.eisen.sesam.userinterface.MainActivity;
 
 import java.util.List;
 
@@ -23,12 +25,14 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     private Context _context;
     private List<TimeWindow> timeWindows;    //timeWindows
+    private EspSettings espSettings;
     private MainActivity mainActivity;
 
 
-    public ExpandableListAdapter(Context context, List<TimeWindow>  content, MainActivity mainActivity) {
+    public ExpandableListAdapter(Context context, EspSettings espSettings, MainActivity mainActivity) {
         this._context = context;
-        this.timeWindows = content;
+        this.espSettings = espSettings;
+        this.timeWindows = espSettings.getTimeWindows();
         this.mainActivity = mainActivity;
     }
 
@@ -134,17 +138,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     @Override
     public void notifyDataSetChanged() {
         super.notifyDataSetChanged();
-        mainActivity.saveData();
-        mainActivity.sendDataToServer();
-    }
-
-    public List<TimeWindow> getTimeWindows() {
-        return timeWindows;
-    }
-
-    public void setTimeWindows(List<TimeWindow> timeWindows) {
-        this.timeWindows = timeWindows;
-        notifyDataSetChanged();
+        mainActivity.saveData(espSettings);
+        mainActivity.sendDataToServer(MqttHelper.TOPIC_ESP_SETTINGS,espSettings.convertSettingsToJSON(),true);
     }
 
     public void clearTimeWindows() {

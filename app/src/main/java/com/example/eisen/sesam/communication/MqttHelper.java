@@ -2,12 +2,9 @@ package com.example.eisen.sesam.communication;
 
 import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
-import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
-import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -20,17 +17,20 @@ public class MqttHelper{
 
     private MqttAndroidClient mqttAndroidClient;
 
-    private final String clientId = "SesamApp";
-    private final String subscriptionTopic = "Sesam/Esp/state";         //for Button SofortÖffnen
-    private final String Topic_Settings = "Sesam/Settings/date";
-    private final String TOPIC_ACTIVITYFEED = "Sesam/activityfeed";
+    public static final String CLIENT_ID = "SesamApp";
+    
+    public static final String TOPIC_ESP_ACTIVATED = "Sesam/Esp/state";         //for Button SofortÖffnen
+    public static final String TOPIC_ESP_SETTINGS = "Sesam/Settings/date";
+    public static final String TOPIC_ACTIVITYFEED = "Sesam/activityfeed";
+    public static final String TOPIC_OPENDOOR_NOW ="Sesam/openDoorNow";
+
     private String serverIp;
     private Context context;
 
     public MqttHelper(final Context context, String ip,MqttCallback mqttCallback, IMqttActionListener iMqttActionListener){
         this.context=context;
         serverIp="tcp://"+ip+":1883";
-        mqttAndroidClient = new MqttAndroidClient(context, serverIp, clientId);
+        mqttAndroidClient = new MqttAndroidClient(context, serverIp, CLIENT_ID);
         mqttAndroidClient.setCallback(mqttCallback);
         connect(iMqttActionListener);
     }
@@ -53,8 +53,8 @@ public class MqttHelper{
 
     public void subscribeToTopics() {
         try {
-            mqttAndroidClient.subscribe(subscriptionTopic, 0);
-            mqttAndroidClient.subscribe(Topic_Settings, 0);
+            mqttAndroidClient.subscribe(TOPIC_ESP_ACTIVATED, 0);
+            mqttAndroidClient.subscribe(TOPIC_ESP_SETTINGS, 0);
             mqttAndroidClient.subscribe(TOPIC_ACTIVITYFEED, 0);
         } catch (MqttException ex) {
             System.err.println("Exceptionst subscribing");

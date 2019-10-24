@@ -30,8 +30,10 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.example.eisen.sesam.R;
+import com.example.eisen.sesam.communication.MqttHelper;
 import com.example.eisen.sesam.data.mqtt.EspSettings;
 import com.example.eisen.sesam.data.mqtt.TimeWindow;
+import com.example.eisen.sesam.userinterface.utils.ExpandableListAdapter;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -44,9 +46,6 @@ import java.util.Observer;
  * A simple {@link Fragment} subclass.
  */
 public class TimeWindowsFragment extends Fragment implements Observer {
-
-    //DebugTags
-    public static final String UPDATEFRAGMENT_TAG="updateFragment";
 
     private ExpandableListView expListView;
     private ExpandableListAdapter listAdapter;
@@ -66,7 +65,7 @@ public class TimeWindowsFragment extends Fragment implements Observer {
     private DatePickerDialog datePickerDialog;
     private TimePickerDialog timePickerDialog;
     //__________Observable___________________
-    EspSettings observableSettinsmodel;
+    EspSettings observableEspSettings;
 
     boolean editTextIsTouched=false;
 
@@ -86,13 +85,13 @@ public class TimeWindowsFragment extends Fragment implements Observer {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        observableSettinsmodel =((MainActivity)getActivity()).getEspSettings();
-        observableSettinsmodel.addObserver(this);
+        observableEspSettings =((MainActivity)getActivity()).getEspSettings();
+        observableEspSettings.addObserver(this);
 
         initSeekBars();
         initEditTexts();
         initButtons();
-        refreshFragment(observableSettinsmodel);
+        refreshFragment(observableEspSettings);
         
     }
 
@@ -118,7 +117,7 @@ public class TimeWindowsFragment extends Fragment implements Observer {
 
     private void refreshFragment(EspSettings espSettings){
         expListView = (ExpandableListView) getView().findViewById(R.id.expListViewTimeWidows2);
-        listAdapter = new ExpandableListAdapter(getContext(), espSettings.getTimeWindows(), ((MainActivity)getActivity()));
+        listAdapter = new ExpandableListAdapter(getContext(), espSettings, ((MainActivity)getActivity()));
         expListView.setAdapter(listAdapter);
     }
 
@@ -132,7 +131,7 @@ public class TimeWindowsFragment extends Fragment implements Observer {
         });
 
         buttonDeleteAllWindows = (Button) getView().findViewById(R.id.buttonDeleteAllWindows2);
-        if(observableSettinsmodel.getTimeWindows().size()!=0) {
+        if(observableEspSettings.getTimeWindows().size()!=0) {
             buttonDeleteAllWindows.setEnabled(true);
         }
 
@@ -140,8 +139,8 @@ public class TimeWindowsFragment extends Fragment implements Observer {
             @Override
             public void onClick(View v) {
                 deleleteWindowList();
-                ((MainActivity)getActivity()).saveData();
-                ((MainActivity)getActivity()).sendDataToServer();
+                ((MainActivity)getActivity()).saveData(observableEspSettings);
+                ((MainActivity)getActivity()).sendDataToServer(MqttHelper.TOPIC_ESP_SETTINGS,observableEspSettings.convertSettingsToJSON(),true);
             }
         });
 
@@ -428,7 +427,7 @@ public class TimeWindowsFragment extends Fragment implements Observer {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        observableSettinsmodel.deleteObserver(this);
+        observableEspSettings.deleteObserver(this);
         Log.d("TEST2","timewindows -frag destroy");
     }
 }

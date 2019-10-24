@@ -3,17 +3,15 @@ package com.example.eisen.sesam.storage;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.SharedPreferences;
-import android.util.Log;
-
-import com.example.eisen.sesam.userinterface.MainActivity;
 import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
-import com.google.gson.internal.Primitives;
-
-import java.lang.reflect.Type;
-import java.util.List;
 
 public class StorageOrganizer {
+
+    public static final String SHARED_PREFS = "SHARED_PREFS" ;
+
+    public static final String SLOT_ESP_SETIINGS ="SLOT_ESP_SETIINGS";
+    public static final String SLOT_APP_SETIINGS ="SLOT_APP_SETIINGS";
+    public static final String SLOT_ESP_ACTIVITIES ="SLOT_ESP_ACTIVITIES";
 
     private static SharedPreferences sharedPreferences;
 
@@ -30,24 +28,6 @@ public class StorageOrganizer {
         }
 
         return dataObject;
-    }
-
-    public static String loadString(ContextWrapper contextWrapper, String sharedprefs, String slot){
-        sharedPreferences = contextWrapper.getSharedPreferences(sharedprefs, Context.MODE_PRIVATE);
-        if(sharedPreferences.contains(slot)) {
-            String ip= sharedPreferences.getString(slot, "");
-            return ip;
-        }else{
-            Log.d("IP", "SERVERIP existiert noch nicht");
-            return MainActivity.IP;
-        }
-    }
-
-    public static void saveString(ContextWrapper contextWrapper, String sharedprefs, String slot, String data){
-        sharedPreferences = contextWrapper.getSharedPreferences(sharedprefs, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(slot, data);
-        editor.commit();
     }
 
     public static void saveObject(ContextWrapper contextWrapper, String sharedprefs, String slot, Object data){

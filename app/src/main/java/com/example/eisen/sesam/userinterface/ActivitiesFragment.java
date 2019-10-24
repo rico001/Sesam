@@ -27,7 +27,7 @@ import java.util.Observer;
  */
 public class ActivitiesFragment extends Fragment implements Observer {
 
-    private LinearLayout activityLayout = null;
+    private LinearLayout activityLayout;
     private ActivityWrapper observableActivityWrapper;
 
     public ActivitiesFragment() {

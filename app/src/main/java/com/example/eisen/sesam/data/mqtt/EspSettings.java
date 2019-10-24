@@ -35,10 +35,8 @@ public class EspSettings extends Observable {
         this.timeWindows = timeWindows;
     }
 
-    public static String convertSettingsToJSON(EspSettings s) {
-        Gson gson = new Gson();
-        String settingsDataJSON = gson.toJson(s);
-        return settingsDataJSON;
+    public String convertSettingsToJSON() {
+        return new Gson().toJson(this);
     }
 
     public void update(EspSettings s) {

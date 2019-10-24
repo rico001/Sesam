@@ -24,20 +24,15 @@ import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
+import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+
+import java.io.UnsupportedEncodingException;
 
 public class MainActivity extends AppCompatActivity implements MqttCallback, IMqttActionListener{
 
     //DebugTags
     public static final String MQTTDEBUG_TAG="mqttdebug";
-
-    //_____________________SAVE DATA LOCAL_________________________________________
-    public static final String SHARED_PREFS = "SHARED_PREFS" ;
-    public static final String SAVE_ESP_SETIINGS ="SAVE_ESP_SETIINGS";
-    public static final String SAVE_APP_SETIINGS ="SAVE_APP_SETIINGS";
-    public static final String SERVERIP="IP";
-
-    public static final String IP="192.168.2.108";
 
     //________________Menu_________________________________________________________
     private BottomNavigationView mMainNav;
@@ -53,8 +48,6 @@ public class MainActivity extends AppCompatActivity implements MqttCallback, IMq
 
     //____________mqtt_____________________________________________________________
     private MqttHelper mqttHelper;
-    final String SETTINGSTOPIC = "Sesam/Settings/date";
-    final String TOPIC_ACTIVITYFEED = "Sesam/activityfeed";
 
     //__________________Data______________________________________________________
     private EspSettings espSettings;
@@ -69,7 +62,6 @@ public class MainActivity extends AppCompatActivity implements MqttCallback, IMq
 
         //Menü einrichten
         mMainNav = (BottomNavigationView) findViewById(R.id.main_nav);
-        initFragmentTransaction(openDoorFragment);
         mMainNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
@@ -101,12 +93,13 @@ public class MainActivity extends AppCompatActivity implements MqttCallback, IMq
             }
         });
 
+        initFragmentTransaction(openDoorFragment);
         initButton();
-        initData();
-        initMqttHelper();
+        loadData();
+        initMqttConnection();
     }
 
-    private void initMqttHelper(){
+    public void initMqttConnection(){
         mqttHelper = new MqttHelper(getApplicationContext(),appSettings.getBrokerIP(),this, this);
     }
 
@@ -122,54 +115,39 @@ public class MainActivity extends AppCompatActivity implements MqttCallback, IMq
         button_connectionfail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                initNewConnection();
+                initMqttConnection();
             }
         });
     }
 
-    public void initData(){
+    public void loadData(){
         try{
-            activityWrapper = new ActivityWrapper();
-            appSettings = StorageOrganizer.loadObject(this,SHARED_PREFS, SAVE_APP_SETIINGS, AppSettings.class);
-            espSettings = StorageOrganizer.loadObject(this,SHARED_PREFS, SAVE_ESP_SETIINGS, EspSettings.class);
+            activityWrapper = StorageOrganizer.loadObject(this,StorageOrganizer.SHARED_PREFS, StorageOrganizer.SLOT_ESP_ACTIVITIES, ActivityWrapper.class);
+            appSettings = StorageOrganizer.loadObject(this,StorageOrganizer.SHARED_PREFS, StorageOrganizer.SLOT_APP_SETIINGS, AppSettings.class);
+            espSettings = StorageOrganizer.loadObject(this,StorageOrganizer.SHARED_PREFS, StorageOrganizer.SLOT_ESP_SETIINGS, EspSettings.class);
         }catch (InstantiationException | IllegalAccessException e){
             Log.d("loaddata",e.toString());
         }
     }
 
-    public void pubTo(String message, String anyTopic, boolean retainFlag){
-        try {
-            mqttHelper.publishMessageTo(message,0,anyTopic, retainFlag);
-        }catch(Exception e){
-            Log.d("Mqtt", "Publish Fehler von MainActivity");
-        }
+    public void saveData(EspSettings espSettings){
+        StorageOrganizer.saveObject(this,StorageOrganizer.SHARED_PREFS, StorageOrganizer.SLOT_ESP_SETIINGS, espSettings);
     }
 
-    public EspSettings getEspSettings() {
-        return espSettings;
+    public void saveData(AppSettings appSettings){
+        StorageOrganizer.saveObject(this,StorageOrganizer.SHARED_PREFS, StorageOrganizer.SLOT_APP_SETIINGS, appSettings);
     }
 
-    public void saveData(){
-        StorageOrganizer.saveObject(this,SHARED_PREFS, SAVE_ESP_SETIINGS, espSettings);
-        StorageOrganizer.saveObject(this,SHARED_PREFS, SAVE_APP_SETIINGS, appSettings);
-    }
-
-    public void sendDataToServer(){
-       // String data =EspSettings.createDatesStringforMqtt(espSettings);
-        String data = EspSettings.convertSettingsToJSON(espSettings);
-        pubTo(data, SETTINGSTOPIC, true);
+    public void saveData(ActivityWrapper activityWrapper){
+        StorageOrganizer.saveObject(this,StorageOrganizer.SHARED_PREFS, StorageOrganizer.SLOT_ESP_ACTIVITIES, activityWrapper);
     }
 
     public void sendDataToServer(String anyTopic, String data, boolean retainFlag){
-        pubTo(data, anyTopic, retainFlag);
-    }
-
-    public MqttHelper getMqttHelper() {
-        return mqttHelper;
-    }
-
-    public void initNewConnection(){
-        mqttHelper = new MqttHelper(getApplicationContext(),appSettings.getBrokerIP(),this, this);
+        try {
+            mqttHelper.publishMessageTo(data,0,anyTopic, retainFlag);
+        }catch(MqttException | UnsupportedEncodingException e){
+            Log.d("Mqtt", "Publish Fehler von MainActivity");
+        }
     }
 
     public ActivityWrapper getActivityWrapper() {
@@ -178,6 +156,10 @@ public class MainActivity extends AppCompatActivity implements MqttCallback, IMq
 
     public AppSettings getAppSettings() {
         return appSettings;
+    }
+
+    public EspSettings getEspSettings() {
+        return espSettings;
     }
 
     @Override
@@ -189,13 +171,14 @@ public class MainActivity extends AppCompatActivity implements MqttCallback, IMq
 
     @Override
     public void messageArrived(String topic, MqttMessage message){
-        if(topic.equals(SETTINGSTOPIC)){
+        if(topic.equals(MqttHelper.TOPIC_ESP_SETTINGS)){
             Log.d("TEST",message.toString());
             espSettings.update(new Gson().fromJson(message.toString(), EspSettings.class));
         }
 
-        if(topic.equals(TOPIC_ACTIVITYFEED)){
+        if(topic.equals(MqttHelper.TOPIC_ACTIVITYFEED)){
             activityWrapper.update(new Gson().fromJson(message.toString(), ActivityWrapper.class));
+            saveData(activityWrapper);
         }
     }
 

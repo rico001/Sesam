@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.example.eisen.sesam.R;
+import com.example.eisen.sesam.communication.MqttHelper;
 import com.example.eisen.sesam.data.mqtt.EspSettings;
 
 /**
@@ -29,7 +30,6 @@ public class OpenDoorFragment extends Fragment {
     private ImageView imageViewFrameRed;
     private Button buttonOpenDoor;
 
-    public static final String OPENDOORTOPIC="Sesam/openDoorNow";
 
     public OpenDoorFragment() {
 
@@ -56,7 +56,7 @@ public class OpenDoorFragment extends Fragment {
                 EspSettings espSettings =((MainActivity)getActivity()).getEspSettings();
                 String data="";
                 data+= espSettings.getDuration();
-                ((MainActivity)getActivity()).sendDataToServer(OPENDOORTOPIC,data,false); //ESp sendet nach öffnen leeren string!!
+                ((MainActivity)getActivity()).sendDataToServer(MqttHelper.TOPIC_OPENDOOR_NOW,data,false); //ESp sendet nach öffnen leeren string!!
                 startAnim(espSettings.getDuration());
             }
         });
