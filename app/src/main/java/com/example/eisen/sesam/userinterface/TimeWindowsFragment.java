@@ -139,7 +139,7 @@ public class TimeWindowsFragment extends Fragment implements Observer {
             @Override
             public void onClick(View v) {
                 deleleteWindowList();
-                ((MainActivity)getActivity()).saveData(observableEspSettings);
+                ((MainActivity)getActivity()).saveData(false,false,true);
                 ((MainActivity)getActivity()).sendDataToServer(MqttHelper.TOPIC_ESP_SETTINGS,observableEspSettings.convertSettingsToJSON(),true);
             }
         });

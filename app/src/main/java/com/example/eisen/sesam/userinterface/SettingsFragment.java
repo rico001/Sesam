@@ -100,11 +100,11 @@ public class SettingsFragment extends Fragment implements Observer {
                 v.setEnabled(false);
                 observableEspSettings.setDuration(seekBarDuration.getProgress());
                 appSettings.setBrokerIP(editTextServerIP.getText().toString());
-                ((MainActivity)getActivity()).saveData(observableEspSettings);
+                ((MainActivity)getActivity()).saveData(false,false,true);
                 ((MainActivity)getActivity()).sendDataToServer(MqttHelper.TOPIC_ESP_SETTINGS,observableEspSettings.convertSettingsToJSON(),true);
 
                 if(ipChanged==true) {
-                    ((MainActivity)getActivity()).saveData(appSettings);
+                    ((MainActivity)getActivity()).saveData(true,false,false);
                     ((MainActivity) getActivity()).initMqttConnection();
                     Log.d("IP","ip geändert und reconnect init");
                     ipChanged=false;

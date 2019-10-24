@@ -130,16 +130,13 @@ public class MainActivity extends AppCompatActivity implements MqttCallback, IMq
         }
     }
 
-    public void saveData(EspSettings espSettings){
-        StorageOrganizer.saveObject(this,StorageOrganizer.SHARED_PREFS, StorageOrganizer.SLOT_ESP_SETIINGS, espSettings);
-    }
-
-    public void saveData(AppSettings appSettings){
-        StorageOrganizer.saveObject(this,StorageOrganizer.SHARED_PREFS, StorageOrganizer.SLOT_APP_SETIINGS, appSettings);
-    }
-
-    public void saveData(ActivityWrapper activityWrapper){
-        StorageOrganizer.saveObject(this,StorageOrganizer.SHARED_PREFS, StorageOrganizer.SLOT_ESP_ACTIVITIES, activityWrapper);
+    public void saveData(boolean saveAppSettings, boolean saveActivityWrapper, boolean saveEspSettings) {
+        if (saveActivityWrapper)
+            StorageOrganizer.saveObject(this, StorageOrganizer.SHARED_PREFS, StorageOrganizer.SLOT_ESP_ACTIVITIES, activityWrapper);
+        if (saveEspSettings)
+            StorageOrganizer.saveObject(this, StorageOrganizer.SHARED_PREFS, StorageOrganizer.SLOT_ESP_SETIINGS, espSettings);
+        if (saveAppSettings)
+            StorageOrganizer.saveObject(this, StorageOrganizer.SHARED_PREFS, StorageOrganizer.SLOT_APP_SETIINGS, appSettings);
     }
 
     public void sendDataToServer(String anyTopic, String data, boolean retainFlag){
@@ -178,7 +175,7 @@ public class MainActivity extends AppCompatActivity implements MqttCallback, IMq
 
         if(topic.equals(MqttHelper.TOPIC_ACTIVITYFEED)){
             activityWrapper.update(new Gson().fromJson(message.toString(), ActivityWrapper.class));
-            saveData(activityWrapper);
+            saveData(false,true,false);
         }
     }
 

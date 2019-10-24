@@ -138,7 +138,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     @Override
     public void notifyDataSetChanged() {
         super.notifyDataSetChanged();
-        mainActivity.saveData(espSettings);
+        mainActivity.saveData(false,false,true);
         mainActivity.sendDataToServer(MqttHelper.TOPIC_ESP_SETTINGS,espSettings.convertSettingsToJSON(),true);
     }
 
