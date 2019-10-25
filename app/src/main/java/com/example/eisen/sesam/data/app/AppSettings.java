@@ -2,7 +2,7 @@ package com.example.eisen.sesam.data.app;
 
 public class AppSettings {
 
-    private String brokerIP="192.168.2.108";
+    private String brokerIP="192.168.178.80";
 
     public String getBrokerIP() {
         return brokerIP;

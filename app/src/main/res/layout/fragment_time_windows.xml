@@ -136,11 +136,12 @@
             android:orientation="horizontal">
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_width="288dp"
+                android:layout_height="50dp"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
                 android:layout_weight="1"
+                android:background="#C5E3E3E3"
                 android:orientation="vertical">
 
                 <LinearLayout
@@ -185,14 +186,13 @@
                 android:id="@+id/buttonSaveTimeWindow2"
                 style="@style/Widget.AppCompat.Button.Colored"
                 android:layout_width="150dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:enabled="false"
-                android:text="+"
-                android:textAlignment="center"
+                android:text="hinzufügen"
                 android:textAllCaps="false"
-                android:textSize="24sp"
-                android:textStyle="bold" />
+                android:textSize="12sp"
+                android:textStyle="normal" />
         </LinearLayout>
 
         <TextView
