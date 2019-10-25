@@ -4,10 +4,6 @@ package com.example.eisen.sesam.userinterface;
 refreshen nachdem NoConnectionBtn geklick wurde
 ->noConnectionBtn verschwindet
  */
-import android.app.DatePickerDialog;
-import android.app.TimePickerDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,21 +12,16 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.example.eisen.sesam.R;
-import com.example.eisen.sesam.communication.MqttHelper;
 import com.example.eisen.sesam.data.mqtt.EspSettings;
 import com.example.eisen.sesam.data.mqtt.TimeWindow;
 import com.example.eisen.sesam.userinterface.utils.DateEditText;
@@ -38,7 +29,6 @@ import com.example.eisen.sesam.userinterface.utils.ExpandableListAdapter;
 import com.example.eisen.sesam.userinterface.utils.TimeEditText;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -55,10 +45,11 @@ public class TimeWindowsFragment extends Fragment implements Observer {
     private Button buttonSaveTimeWindow;
     //_______________EditTexts_______________
     private EditText editTextTitel;
-    private TimeEditText editTextVon;
-    private TimeEditText editTextBis;
-    private DateEditText editTextDate2;
+    private TimeEditText editTextTime1;
+    private TimeEditText editTextTIme2;
     private DateEditText editTextDate1;
+    private DateEditText editTextDate2;
+    private View.OnClickListener onClick_editTextTitel_clearFocus = v -> editTextTitel.clearFocus();
     //_______________Textviews______________
     private TextView textViewTime;
     //_______________Seekbars_______________
@@ -104,6 +95,7 @@ public class TimeWindowsFragment extends Fragment implements Observer {
                 }else{
                     textViewTime.setText("Zeitfenster deaktiviert");
                 }
+                editTextTitel.clearFocus();
             }
             @Override
             public void onStartTrackingTouch(SeekBar seekBar){}
@@ -136,13 +128,14 @@ public class TimeWindowsFragment extends Fragment implements Observer {
             timeWindow.setTitle(editTextTitel.getText().toString());
             timeWindow.setFromDate(editTextDate1.getText().toString());
             timeWindow.setTillDate(editTextDate2.getText().toString());
-            timeWindow.setFromTime(editTextVon.getText().toString());
-            timeWindow.setTillTime(editTextBis.getText().toString());
+            timeWindow.setFromTime(editTextTime1.getText().toString());
+            timeWindow.setTillTime(editTextTIme2.getText().toString());
             timeWindow.setRingNumber(seekbarKlingeln.getProgress());
 
             listAdapter.addTimeWindow(timeWindow);
             setEmptyEditTexts();
             buttonSaveTimeWindow.setEnabled(false);
+            editTextTitel.clearFocus();
         }else{
             Toast.makeText(getContext(),"Füllen Sie alle Felder aus, um ein\n      Zeitfenster hinzuzufügen.",Toast.LENGTH_SHORT).show();
         }
@@ -171,19 +164,24 @@ public class TimeWindowsFragment extends Fragment implements Observer {
             }
         });
 
+        editTextDate1 = (DateEditText) getView().findViewById(R.id.editTextDate1);
+        editTextDate1.setOnClickListener(onClick_editTextTitel_clearFocus);
 
         editTextDate2 = (DateEditText) getView().findViewById(R.id.editTextDate2);
-        editTextDate1 = (DateEditText) getView().findViewById(R.id.editTextDate1);
+        editTextDate2.setOnClickListener(onClick_editTextTitel_clearFocus);
 
-        editTextVon = (TimeEditText) getView().findViewById(R.id.editTextVon2);
-        editTextBis = (TimeEditText) getView().findViewById(R.id.editTextBis2);
-        editTextBis.setDefaulTime(23,59);
+        editTextTime1 = (TimeEditText) getView().findViewById(R.id.editTextTime1);
+        editTextTime1.setOnClickListener(onClick_editTextTitel_clearFocus);
+
+        editTextTIme2 = (TimeEditText) getView().findViewById(R.id.editTextTime2);
+        editTextTIme2.setOnClickListener(onClick_editTextTitel_clearFocus);
+        editTextTIme2.setDefaulTime(23,59);
 
     }
 
     private void setEmptyEditTexts(){
-        editTextBis.setText("");
-        editTextVon.setText("");
+        editTextTime1.setText("");
+        editTextTIme2.setText("");
         editTextDate1.setText("");
         editTextDate2.setText("");
         editTextTitel.setText("");
@@ -202,10 +200,10 @@ public class TimeWindowsFragment extends Fragment implements Observer {
         if(editTextTitel.getText().toString().equals("")){
             return false;
         }
-        if(editTextVon.getText().toString().equals("")){
+        if(editTextTime1.getText().toString().equals("")){
             return false;
         }
-        if(editTextBis.getText().toString().equals("")){
+        if(editTextTIme2.getText().toString().equals("")){
             return false;
         }
 

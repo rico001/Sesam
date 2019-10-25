@@ -32,7 +32,7 @@
             style="@style/ThemeOverlay.MaterialComponents.TextInputEditText.OutlinedBox"
             android:layout_width="30dp"
             android:layout_height="20dp"
-            android:background="@color/colorPrimary"
+            android:background="#008577"
             android:elevation="0dp"
             android:focusable="false"
             android:text="X"

@@ -5,6 +5,7 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.widget.AppCompatEditText;
+import android.support.v7.widget.AppCompatTextView;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -12,7 +13,7 @@ import android.widget.TimePicker;
 
 import java.util.Calendar;
 
-public class TimeEditText extends AppCompatEditText implements View.OnTouchListener {
+public class TimeEditText extends AppCompatTextView implements View.OnTouchListener {
 
     private TimePickerDialog timePickerDialog;
     boolean editTextIsTouched=false;
@@ -39,7 +40,6 @@ public class TimeEditText extends AppCompatEditText implements View.OnTouchListe
     public boolean onTouch(View v, MotionEvent event) {
         if(editTextIsTouched==false) {
             editTextIsTouched = true;
-
 
             int min;
             int hour;

@@ -5,6 +5,7 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.widget.AppCompatEditText;
+import android.support.v7.widget.AppCompatTextView;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -12,7 +13,7 @@ import android.widget.DatePicker;
 
 import java.util.Calendar;
 
-public class DateEditText extends AppCompatEditText implements View.OnTouchListener {
+public class DateEditText extends AppCompatTextView implements View.OnTouchListener {
 
     private DatePickerDialog datePickerDialog;
     boolean editTextIsTouched=false;
